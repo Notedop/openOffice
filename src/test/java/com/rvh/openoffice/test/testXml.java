@@ -1,19 +1,19 @@
 package com.rvh.openoffice.test;
 
 import com.rvh.openoffice.PackageCreator;
-import com.rvh.openoffice.PartsCreator;
 import com.rvh.openoffice.test.basetestcase.h2DatabaseTests;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
-public class testXml extends h2DatabaseTests {
+class testXml extends h2DatabaseTests {
 
     @Test
-    public void testConnection() throws IOException, XMLStreamException {
-
-        System.out.println("something happened");
+    void testConnection() throws IOException, XMLStreamException {
 
         PackageCreator creator = new PackageCreator(getDataSource());
 

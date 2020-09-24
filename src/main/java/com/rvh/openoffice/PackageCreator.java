@@ -1,14 +1,18 @@
 package com.rvh.openoffice;
 
+import com.rvh.openoffice.parts.PartsCreator;
+import com.rvh.openoffice.parts.SheetPartsCreator;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 
 import javax.sql.DataSource;
-import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Enumeration;
 
 public class PackageCreator {
@@ -34,8 +38,8 @@ public class PackageCreator {
                         zos.closeArchiveEntry();
                     }
                 }
-                PartsCreator partsCreator = new PartsCreator(dataSource, zos);
-                partsCreator.createSheetPart("someName", "select FIRST_NAME from USERS");
+                PartsCreator partsCreator = new SheetPartsCreator(dataSource, zos);
+                partsCreator.createPart("someName", "select FIRST_NAME from USERS");
 
             }
         }

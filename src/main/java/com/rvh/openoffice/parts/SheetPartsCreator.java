@@ -1,4 +1,4 @@
-package com.rvh.openoffice;
+package com.rvh.openoffice.parts;
 
 import com.rvh.openoffice.consumer.WorkSheetRowHandler;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
@@ -16,36 +15,33 @@ import java.io.OutputStreamWriter;
 /**
  * PartsCreater creates the OpenOffice XML parts required to build a OpenOfficeDocument.
  */
-public class PartsCreator {
+public class SheetPartsCreator extends PartsCreator {
 
-    private final DataSource dataSource;
-    private XMLStreamWriter xsw;
-    private final ZipArchiveOutputStream zos;
-    private String originalSheetName;
 
-    public PartsCreator(DataSource dataSource, ZipArchiveOutputStream zos) {
-        this.dataSource = dataSource;
-        this.zos = zos;
+    public SheetPartsCreator(DataSource dataSource, ZipArchiveOutputStream zos) {
+        super(dataSource,zos);
     }
 
-    public void createSheetPart(String sheetName, String sql) throws XMLStreamException, IOException {
+    @Override
+    public void createPart(String name, String sql) throws XMLStreamException, IOException {
 
-        this.originalSheetName = sheetName;
+        originalSheetName = name;
 
         XMLOutputFactory xof = XMLOutputFactory.newFactory();
         xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
 
         WorkSheetRowHandler handler = new WorkSheetRowHandler(xsw, 1, this);
-        createSheetHeader(sheetName);
+        createHeader(name);
 
         //the handler will directly write from result set to the writer
         new JdbcTemplate(dataSource).query(sql, handler);
 
-        createSheetFooter();
+        createFooter();
 
     }
 
-    public void createSheetHeader(String name) throws XMLStreamException, IOException {
+    @Override
+    public void createHeader(String name) throws XMLStreamException, IOException {
 
         //TODO: everytime we create a sheet, we need make sure the sheet is registered in the workbook
         zos.putArchiveEntry(new ZipArchiveEntry("xl\\worksheets\\" + name));
@@ -58,7 +54,8 @@ public class PartsCreator {
 
     }
 
-    public void createSheetFooter() throws XMLStreamException, IOException {
+    @Override
+    public void createFooter() throws XMLStreamException, IOException {
         xsw.writeEndElement();//end worksheet
         xsw.writeEndElement();//end workbook
 

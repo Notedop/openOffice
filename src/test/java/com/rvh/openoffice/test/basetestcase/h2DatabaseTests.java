@@ -25,7 +25,7 @@ public class h2DatabaseTests {
     private static Server server = null;
     private static Server webServer = null;
 
-    private static Logger log = Logger.getLogger("h2DatabaseTests");
+    private static final Logger log = Logger.getLogger("h2DatabaseTests");
 
     @BeforeAll
     static void initializeDatabase() throws Exception {
