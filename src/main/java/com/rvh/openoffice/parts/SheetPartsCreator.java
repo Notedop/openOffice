@@ -10,6 +10,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 
 /**
@@ -18,19 +19,18 @@ import java.io.OutputStreamWriter;
 public class SheetPartsCreator extends PartsCreator {
 
 
-    public SheetPartsCreator(DataSource dataSource, ZipArchiveOutputStream zos) {
-        super(dataSource,zos);
+    public SheetPartsCreator(DataSource dataSource, ZipArchiveOutputStream zos, List<Config> configs) {
+        super(dataSource, zos, configs);
     }
 
     @Override
     public void createPart(String name, String sql) throws XMLStreamException, IOException {
 
-        originalSheetName = name;
-
         XMLOutputFactory xof = XMLOutputFactory.newFactory();
         xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
 
         WorkSheetRowHandler handler = new WorkSheetRowHandler(xsw, 1, this);
+
         createHeader(name);
 
         //the handler will directly write from result set to the writer
@@ -63,7 +63,5 @@ public class SheetPartsCreator extends PartsCreator {
 
     }
 
-    public String getOriginalSheetName() {
-        return originalSheetName;
-    }
+
 }

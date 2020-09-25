@@ -39,7 +39,7 @@ public class WorkSheetRowHandler implements RowCallbackHandler {
                 processedSheets++;
                 //close current sheet and create new one
                 sheetPartsCreator.createFooter();
-                sheetPartsCreator.createHeader(sheetPartsCreator.getOriginalSheetName() + processedSheets);
+                sheetPartsCreator.createHeader(sheetPartsCreator.getOriginalPartName() + processedSheets);
                 processSingleRow(rs);
             } catch (XMLStreamException | IOException e) {
                 e.printStackTrace();

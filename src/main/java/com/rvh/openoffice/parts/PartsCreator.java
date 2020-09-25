@@ -12,7 +12,8 @@ public abstract class PartsCreator {
     protected final DataSource dataSource;
     protected XMLStreamWriter xsw;
     protected final ZipArchiveOutputStream zos;
-    protected String originalSheetName;
+    private String partName;
+    private List<Config> configs;
 
     public PartsCreator(DataSource dataSource, ZipArchiveOutputStream zos) {
         this.dataSource = dataSource;
@@ -24,4 +25,9 @@ public abstract class PartsCreator {
     public abstract void createHeader(String name) throws XMLStreamException, IOException;
 
     public abstract void createFooter() throws XMLStreamException, IOException;
+
+    public String getOriginalPartName() {
+        return partName;
+    }
+
 }
