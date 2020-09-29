@@ -18,50 +18,91 @@ import java.util.List;
  */
 public class SheetPartsCreator extends PartsCreator {
 
-
     public SheetPartsCreator(DataSource dataSource, ZipArchiveOutputStream zos, List<Config> configs) {
         super(dataSource, zos, configs);
     }
 
     @Override
-    public void createPart(String name, String sql) throws XMLStreamException, IOException {
+    public void createPart() throws XMLStreamException, IOException {
 
-        XMLOutputFactory xof = XMLOutputFactory.newFactory();
-        xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
+        SheetConfig config = getSheetConfig();
 
-        WorkSheetRowHandler handler = new WorkSheetRowHandler(xsw, 1, this);
+        if (config!= null) {
 
-        createHeader(name);
+            setOriginalPartName(config.getName());
 
-        //the handler will directly write from result set to the writer
-        new JdbcTemplate(dataSource).query(sql, handler);
+            XMLOutputFactory xof = XMLOutputFactory.newFactory();
+            xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
 
-        createFooter();
+            WorkSheetRowHandler handler = new WorkSheetRowHandler(xsw, config.getMaxRows(), this);
 
+            createHeader(config.getName());
+
+            //the handler will directly write from result set to the writer
+            new JdbcTemplate(config.getDataSource()).query(config.getSql(), handler);
+
+            createFooter();
+        } else {
+            //log error, throw exception
+        }
+
+
+
+    }
+
+    private SheetConfig getSheetConfig() {
+        for (Config config : configs) {
+            if (config instanceof SheetConfig )
+                return (SheetConfig) config;
+        }
+        return null;
     }
 
     @Override
     public void createHeader(String name) throws XMLStreamException, IOException {
 
         //TODO: everytime we create a sheet, we need make sure the sheet is registered in the workbook
-        zos.putArchiveEntry(new ZipArchiveEntry("xl\\worksheets\\" + name));
+        zos.putArchiveEntry(new ZipArchiveEntry("xl\\worksheets\\" + name + ".xml"));
 
         xsw.writeStartDocument();
-        xsw.writeStartElement("Workbook");
-        xsw.writeNamespace("xmlns", "urn:schemas-microsoft-com:office:spreadsheet");
-        xsw.writeNamespace("xmlns:o", "urn:schemas-microsoft-com:office:office");
-        xsw.writeStartElement("Worksheet");
+        xsw.writeStartElement("worksheet");
+        xsw.writeNamespace("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
+        xsw.writeNamespace("r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships");
+        xsw.writeNamespace("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
+        xsw.writeAttribute("mc:Ignorable", "x14ac");
+        xsw.writeNamespace("x14ac", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac");
+        xsw.writeEmptyElement("dimension");
+        xsw.writeAttribute("ref", "A1");
+        xsw.writeStartElement("sheetViews");
+        xsw.writeStartElement("sheetView");
+        xsw.writeAttribute("tabSelected", "1");
+        xsw.writeAttribute("workbookViewId", "0");
+        xsw.writeEmptyElement("selection");
+        xsw.writeAttribute("activeCell", "H11");
+        xsw.writeAttribute("sqref", "H11");
+        xsw.writeEndElement();
+        xsw.writeEndElement();
+        xsw.writeEmptyElement("sheetFormatPr");
+        xsw.writeAttribute("defaultRowHeight", "15");
+        xsw.writeAttribute("x14ac:dyDescent", "0.25");
+        xsw.writeStartElement("sheetData");
 
     }
 
     @Override
     public void createFooter() throws XMLStreamException, IOException {
         xsw.writeEndElement();//end worksheet
+        xsw.writeEmptyElement("pageMargins");
+        xsw.writeAttribute("left", "0.7");
+        xsw.writeAttribute("right", "0.7");
+        xsw.writeAttribute("top", "0.75");
+        xsw.writeAttribute("bottom", "0.75");
+        xsw.writeAttribute("header", "0.3");
+        xsw.writeAttribute("footer", "0.3");
         xsw.writeEndElement();//end workbook
-
+        xsw.flush();
+        //TODO: Throw SheetCreatedEvent
         zos.closeArchiveEntry();
 
     }
-
-
 }

@@ -1,7 +1,6 @@
 package com.rvh.openoffice;
 
-import com.rvh.openoffice.parts.PartsCreator;
-import com.rvh.openoffice.parts.SheetPartsCreator;
+import com.rvh.openoffice.parts.*;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
@@ -13,8 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
+//TODO: make packageCreator Observer and implement different events (RowCreatedEvent, CellCreatedEvent,SheetCreatedEvent,etc etc)
 public class PackageCreator {
 
     DataSource dataSource;
@@ -38,8 +40,13 @@ public class PackageCreator {
                         zos.closeArchiveEntry();
                     }
                 }
-                PartsCreator partsCreator = new SheetPartsCreator(dataSource, zos);
-                partsCreator.createPart("someName", "select FIRST_NAME from USERS");
+
+                List<Config> configs = new ArrayList<>();
+                TableConfig tableConfig = new TableConfig("main");
+                //do something with tableConfig.
+                configs.add(new SheetConfig("sheet1", dataSource,"select * from excel_test_data", 1000, tableConfig));
+                PartsCreator partsCreator = new SheetPartsCreator(dataSource, zos, configs);
+                partsCreator.createPart();
 
             }
         }
