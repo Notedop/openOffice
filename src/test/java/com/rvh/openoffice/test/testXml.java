@@ -1,6 +1,9 @@
 package com.rvh.openoffice.test;
 
 import com.rvh.openoffice.PackageCreator;
+import com.rvh.openoffice.parts.config.SheetConfig;
+import com.rvh.openoffice.parts.config.SheetConfigCollection;
+import com.rvh.openoffice.parts.config.TableConfig;
 import com.rvh.openoffice.test.basetestcase.h2DatabaseTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,11 +80,17 @@ class testXml extends h2DatabaseTests {
     @Test
     void testConnection() throws IOException, XMLStreamException {
 
-        PackageCreator creator = new PackageCreator(getDataSource());
-
         File outputFile = new File("test.xlsx");
         OutputStream fos = new FileOutputStream(outputFile);
         File template = new File(this.getClass().getClassLoader().getResource("template.xlsx").getFile());
+
+        SheetConfigCollection configurations = new SheetConfigCollection();
+        TableConfig tableConfig = new TableConfig("main");
+        configurations.addSheetConfig(new SheetConfig("sheet1", getDataSource(),"select * from excel_test_data", 1000, tableConfig));
+        configurations.addSheetConfig(new SheetConfig("sheet2", getDataSource(),"select * from excel_test_data", 50, tableConfig));
+
+        PackageCreator creator = new PackageCreator(configurations);
+
         creator.generate(template, "sheet1", fos);
         fos.close();
 

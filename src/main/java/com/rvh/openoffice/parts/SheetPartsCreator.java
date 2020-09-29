@@ -1,18 +1,16 @@
 package com.rvh.openoffice.parts;
 
 import com.rvh.openoffice.consumer.WorkSheetRowHandler;
-import com.rvh.openoffice.parts.config.Config;
+import com.rvh.openoffice.parts.config.ConfigType;
 import com.rvh.openoffice.parts.config.SheetConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.List;
 
 
 /**
@@ -20,44 +18,37 @@ import java.util.List;
  */
 public class SheetPartsCreator extends PartsCreator {
 
-    public SheetPartsCreator(ZipArchiveOutputStream zos, List<Config> configs) {
-        super(zos, configs);
+    public SheetPartsCreator(ZipArchiveOutputStream zos, SheetConfig config) {
+        super(zos, config);
     }
 
     @Override
     public void createPart() throws XMLStreamException, IOException {
 
-        SheetConfig config = getSheetConfig();
-
         if (config!= null) {
+            if (config.getType().equals(ConfigType.SHEET)) {
+                SheetConfig sheetConfig = (SheetConfig) config;
 
-            setOriginalPartName(config.getName());
+                setOriginalPartName(config.getName());
 
-            XMLOutputFactory xof = XMLOutputFactory.newFactory();
-            xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
+                XMLOutputFactory xof = XMLOutputFactory.newFactory();
+                xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
 
-            WorkSheetRowHandler handler = new WorkSheetRowHandler(xsw, config.getMaxRows(), this);
+                WorkSheetRowHandler handler = new WorkSheetRowHandler(xsw, sheetConfig.getMaxRows(), this);
 
-            createHeader(config.getName());
+                createHeader(sheetConfig.getName());
 
-            //the handler will directly write from result set to the writer
-            new JdbcTemplate(config.getDataSource()).query(config.getSql(), handler);
+                //the handler will directly write from result set to the writer
+                new JdbcTemplate(sheetConfig.getDataSource()).query(sheetConfig.getSql(), handler);
 
-            createFooter();
+                createFooter();
+            } else {
+                //log error, throw exception
+            }
         } else {
             //log error, throw exception
         }
 
-
-
-    }
-
-    private SheetConfig getSheetConfig() {
-        for (Config config : configs) {
-            if (config instanceof SheetConfig )
-                return (SheetConfig) config;
-        }
-        return null;
     }
 
     @Override
