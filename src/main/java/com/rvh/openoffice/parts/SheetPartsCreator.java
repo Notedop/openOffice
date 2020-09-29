@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class SheetPartsCreator extends PartsCreator {
 
-    public SheetPartsCreator(DataSource dataSource, ZipArchiveOutputStream zos, List<Config> configs) {
-        super(dataSource, zos, configs);
+    public SheetPartsCreator(ZipArchiveOutputStream zos, List<Config> configs) {
+        super(zos, configs);
     }
 
     @Override

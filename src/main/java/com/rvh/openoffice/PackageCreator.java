@@ -18,11 +18,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
-//TODO: make packageCreator Observer and implement different events (RowCreatedEvent, CellCreatedEvent,SheetCreatedEvent,etc etc)
 public class PackageCreator {
 
-    DataSource dataSource;
+    private final DataSource dataSource;
+    private Map<String, Config> packageConfiguration;
 
     public PackageCreator(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -35,7 +36,7 @@ public class PackageCreator {
                 Enumeration<? extends ZipArchiveEntry> en = zip.getEntries();
                 while (en.hasMoreElements()) {
                     ZipArchiveEntry ze = en.nextElement();
-                    if (!ze.getName().equals(entry)) {
+                    if (!ze.getName().equals("xl/worksheets/"+entry+".xml")) {
                         zos.putArchiveEntry(new ZipArchiveEntry(ze.getName()));
                         try (InputStream is = zip.getInputStream(ze)) {
                             copyStream(is, zos);
@@ -48,11 +49,15 @@ public class PackageCreator {
                 TableConfig tableConfig = new TableConfig("main");
                 //do something with tableConfig.
                 configs.add(new SheetConfig("sheet1", dataSource,"select * from excel_test_data", 1000, tableConfig));
-                PartsCreator partsCreator = new SheetPartsCreator(dataSource, zos, configs);
+                PartsCreator partsCreator = new SheetPartsCreator( zos, configs);
                 partsCreator.createPart();
 
             }
         }
+    }
+
+    public void addSheetConfig(SheetConfig config) {
+        packageConfiguration.put("SheetConfig", config);
     }
 
     private void copyStream(InputStream in, OutputStream out) throws IOException {

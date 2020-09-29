@@ -12,14 +12,12 @@ import java.util.List;
 //TODO: Make PartsCreator a subject within observer pattern
 public abstract class PartsCreator {
 
-    protected final DataSource dataSource;
     protected XMLStreamWriter xsw;
     protected final ZipArchiveOutputStream zos;
     private String partName;
     protected List<Config> configs;
 
-    public PartsCreator(DataSource dataSource, ZipArchiveOutputStream zos, List<Config> configs) {
-        this.dataSource = dataSource;
+    public PartsCreator(ZipArchiveOutputStream zos, List<Config> configs) {
         this.zos = zos;
         this.configs = configs;
     }
