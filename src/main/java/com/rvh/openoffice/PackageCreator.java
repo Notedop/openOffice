@@ -1,8 +1,10 @@
 package com.rvh.openoffice;
 
 import com.rvh.openoffice.parts.SheetPartsCreator;
+import com.rvh.openoffice.parts.WorkBookPartCreator;
+import com.rvh.openoffice.parts.config.ConfigCollection;
 import com.rvh.openoffice.parts.config.SheetConfig;
-import com.rvh.openoffice.parts.config.SheetConfigCollection;
+import com.rvh.openoffice.parts.config.WorkBookConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
@@ -17,10 +19,10 @@ import java.util.Enumeration;
 
 public class PackageCreator {
 
-    private SheetConfigCollection sheetConfigCollection;
+    private ConfigCollection<SheetConfig> configCollection;
 
-    public PackageCreator(SheetConfigCollection sheetConfigCollection) {
-        this.sheetConfigCollection = sheetConfigCollection;
+    public PackageCreator(ConfigCollection<SheetConfig> configCollection) {
+        this.configCollection = configCollection;
     }
 
     public void generate(File template, String entry, OutputStream out) throws IOException, XMLStreamException {
@@ -39,16 +41,17 @@ public class PackageCreator {
                     }
                 }
 
-                for (SheetConfig config : sheetConfigCollection.getSheetConfigs()) {
-                    SheetPartsCreator sheetPartsCreator = new SheetPartsCreator(zos, config);
-                    sheetPartsCreator.createPart();
-                }
+                ConfigCollection<WorkBookConfig> workBookConfigs = new ConfigCollection<>();
+                SheetPartsCreator sheetPartsCreator = new SheetPartsCreator(zos, configCollection);
+                sheetPartsCreator.createPart();
+                WorkBookPartCreator wbCreator = new WorkBookPartCreator(zos, workBookConfigs);
+                wbCreator.createPart();
             }
         }
     }
 
-    public void setSheetConfigCollection(SheetConfigCollection sheetConfigCollection) {
-        this.sheetConfigCollection = sheetConfigCollection;
+    public void setConfigCollection(ConfigCollection<SheetConfig> sheetConfigCollection) {
+        this.configCollection = sheetConfigCollection;
     }
 
     private void copyStream(InputStream in, OutputStream out) throws IOException {

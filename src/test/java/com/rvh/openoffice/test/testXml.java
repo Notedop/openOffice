@@ -1,8 +1,8 @@
 package com.rvh.openoffice.test;
 
 import com.rvh.openoffice.PackageCreator;
+import com.rvh.openoffice.parts.config.ConfigCollection;
 import com.rvh.openoffice.parts.config.SheetConfig;
-import com.rvh.openoffice.parts.config.SheetConfigCollection;
 import com.rvh.openoffice.parts.config.TableConfig;
 import com.rvh.openoffice.test.basetestcase.h2DatabaseTests;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,12 +84,12 @@ class testXml extends h2DatabaseTests {
         OutputStream fos = new FileOutputStream(outputFile);
         File template = new File(this.getClass().getClassLoader().getResource("template.xlsx").getFile());
 
-        SheetConfigCollection configurations = new SheetConfigCollection();
+        ConfigCollection<SheetConfig> configs = new ConfigCollection<>();
         TableConfig tableConfig = new TableConfig("main");
-        configurations.addSheetConfig(new SheetConfig("sheet1", getDataSource(),"select * from excel_test_data", 1000, tableConfig));
-        configurations.addSheetConfig(new SheetConfig("sheet2", getDataSource(),"select * from excel_test_data", 50, tableConfig));
+        configs.addConfig(new SheetConfig("sheet1", getDataSource(),"select * from excel_test_data", 1000, tableConfig));
+        configs.addConfig(new SheetConfig("sheet2", getDataSource(),"select * from excel_test_data", 50, tableConfig));
 
-        PackageCreator creator = new PackageCreator(configurations);
+        PackageCreator creator = new PackageCreator(configs);
 
         creator.generate(template, "sheet1", fos);
         fos.close();
