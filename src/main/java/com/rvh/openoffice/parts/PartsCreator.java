@@ -1,5 +1,6 @@
 package com.rvh.openoffice.parts;
 
+import com.rvh.openoffice.parts.config.Config;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 import javax.sql.DataSource;

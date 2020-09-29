@@ -1,6 +1,9 @@
 package com.rvh.openoffice;
 
 import com.rvh.openoffice.parts.*;
+import com.rvh.openoffice.parts.config.Config;
+import com.rvh.openoffice.parts.config.SheetConfig;
+import com.rvh.openoffice.parts.config.TableConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;

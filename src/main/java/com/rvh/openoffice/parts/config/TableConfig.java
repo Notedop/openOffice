@@ -1,4 +1,4 @@
-package com.rvh.openoffice.parts;
+package com.rvh.openoffice.parts.config;
 
 public class TableConfig extends Config {
 
