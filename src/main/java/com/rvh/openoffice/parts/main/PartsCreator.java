@@ -1,7 +1,7 @@
-package com.rvh.openoffice.parts;
+package com.rvh.openoffice.parts.main;
 
-import com.rvh.openoffice.parts.config.Config;
-import com.rvh.openoffice.parts.config.ConfigCollection;
+import com.rvh.openoffice.parts.main.config.Config;
+import com.rvh.openoffice.parts.main.config.ConfigCollection;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 import javax.xml.stream.XMLOutputFactory;

@@ -1,7 +1,7 @@
-package com.rvh.openoffice.parts;
+package com.rvh.openoffice.parts.main;
 
-import com.rvh.openoffice.parts.config.ConfigCollection;
-import com.rvh.openoffice.parts.config.RelConfig;
+import com.rvh.openoffice.parts.main.config.ConfigCollection;
+import com.rvh.openoffice.parts.main.config.RelConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 

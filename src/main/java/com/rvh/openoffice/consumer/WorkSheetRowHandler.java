@@ -1,6 +1,6 @@
 package com.rvh.openoffice.consumer;
 
-import com.rvh.openoffice.parts.SheetPartsCreator;
+import com.rvh.openoffice.parts.spreadsheet.SheetPartsCreator;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
 import javax.xml.stream.XMLStreamException;

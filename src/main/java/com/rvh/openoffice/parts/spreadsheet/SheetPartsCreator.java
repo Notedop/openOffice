@@ -1,8 +1,11 @@
-package com.rvh.openoffice.parts;
+package com.rvh.openoffice.parts.spreadsheet;
 
 import com.rvh.openoffice.consumer.WorkSheetRowHandler;
-import com.rvh.openoffice.parts.config.*;
-import com.rvh.openoffice.parts.enums.RelationTypes;
+import com.rvh.openoffice.parts.main.PartsCreator;
+import com.rvh.openoffice.parts.main.config.*;
+import com.rvh.openoffice.parts.main.enums.RelationTypes;
+import com.rvh.openoffice.parts.spreadsheet.config.SheetConfig;
+import com.rvh.openoffice.parts.spreadsheet.config.WorkBookConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.springframework.jdbc.core.JdbcTemplate;

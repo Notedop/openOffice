@@ -1,7 +1,8 @@
-package com.rvh.openoffice.parts;
+package com.rvh.openoffice.parts.spreadsheet;
 
-import com.rvh.openoffice.parts.config.ConfigCollection;
-import com.rvh.openoffice.parts.config.WorkBookConfig;
+import com.rvh.openoffice.parts.main.PartsCreator;
+import com.rvh.openoffice.parts.main.config.ConfigCollection;
+import com.rvh.openoffice.parts.spreadsheet.config.WorkBookConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 

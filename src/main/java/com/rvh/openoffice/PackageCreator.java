@@ -1,9 +1,11 @@
 package com.rvh.openoffice;
 
-import com.rvh.openoffice.parts.RelPartCreator;
-import com.rvh.openoffice.parts.SheetPartsCreator;
-import com.rvh.openoffice.parts.WorkBookPartCreator;
-import com.rvh.openoffice.parts.config.*;
+import com.rvh.openoffice.parts.main.RelPartCreator;
+import com.rvh.openoffice.parts.spreadsheet.SheetPartsCreator;
+import com.rvh.openoffice.parts.spreadsheet.WorkBookPartCreator;
+import com.rvh.openoffice.parts.main.config.*;
+import com.rvh.openoffice.parts.spreadsheet.config.SheetConfig;
+import com.rvh.openoffice.parts.spreadsheet.config.WorkBookConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;

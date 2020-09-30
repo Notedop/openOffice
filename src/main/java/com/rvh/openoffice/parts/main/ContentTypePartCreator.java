@@ -1,7 +1,7 @@
-package com.rvh.openoffice.parts;
+package com.rvh.openoffice.parts.main;
 
-import com.rvh.openoffice.parts.config.Config;
-import com.rvh.openoffice.parts.config.ContentTypeConfig;
+import com.rvh.openoffice.parts.main.config.ConfigCollection;
+import com.rvh.openoffice.parts.main.config.ContentTypeConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
@@ -10,8 +10,8 @@ import java.io.IOException;
 
 public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
 
-    public ContentTypePartCreator(ZipArchiveOutputStream zos, Config config) {
-        super(zos, config);
+    public ContentTypePartCreator(ZipArchiveOutputStream zos, ConfigCollection<ContentTypeConfig> configCollection) {
+        super(zos, configCollection);
     }
 
     @Override

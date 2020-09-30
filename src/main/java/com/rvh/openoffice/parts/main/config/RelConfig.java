@@ -1,7 +1,7 @@
-package com.rvh.openoffice.parts.config;
+package com.rvh.openoffice.parts.main.config;
 
-import com.rvh.openoffice.parts.enums.ConfigType;
-import com.rvh.openoffice.parts.enums.RelationTypes;
+import com.rvh.openoffice.parts.main.enums.ConfigType;
+import com.rvh.openoffice.parts.main.enums.RelationTypes;
 
 public class RelConfig extends Config{
 

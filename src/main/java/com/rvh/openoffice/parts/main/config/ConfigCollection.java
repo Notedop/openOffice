@@ -1,4 +1,4 @@
-package com.rvh.openoffice.parts.config;
+package com.rvh.openoffice.parts.main.config;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.rvh.openoffice.parts.enums;
+package com.rvh.openoffice.parts.main.enums;
 
 public enum ConfigType {
 

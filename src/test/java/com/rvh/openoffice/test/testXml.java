@@ -1,9 +1,9 @@
 package com.rvh.openoffice.test;
 
 import com.rvh.openoffice.PackageCreator;
-import com.rvh.openoffice.parts.config.ConfigCollection;
-import com.rvh.openoffice.parts.config.SheetConfig;
-import com.rvh.openoffice.parts.config.TableConfig;
+import com.rvh.openoffice.parts.main.config.ConfigCollection;
+import com.rvh.openoffice.parts.spreadsheet.config.SheetConfig;
+import com.rvh.openoffice.parts.spreadsheet.config.TableConfig;
 import com.rvh.openoffice.test.basetestcase.h2DatabaseTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
