@@ -1,13 +1,16 @@
-package com.rvh.openoffice.parts.config;
+package com.rvh.openoffice.parts.enums;
 
 public enum ConfigType {
 
+     WORKBOOK,
      SHEET,
      SHEETCOLLECTION,
      PART,
      TABLE,
      ROW,
      CELL,
+     RELATION,
      STYLE
-
 }
+
+
