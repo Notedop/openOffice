@@ -112,7 +112,7 @@ public class SheetPartsCreator extends PartsCreator<SheetConfig> {
         xsw.writeAttribute("footer", "0.3");
         xsw.writeEndElement();//end workbook
         xsw.flush();
-        //TODO: Throw SheetCreatedEvent
+
         zos.closeArchiveEntry();
 
     }

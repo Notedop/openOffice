@@ -25,9 +25,7 @@ public class PackageCreator {
 
     //will be populated during processing
     private ConfigCollection<RelConfig> relConfigs = new ConfigCollection<>();
-    ;
     private ConfigCollection<ContentTypeConfig> contentTypeConfigs = new ConfigCollection<>();
-    ;
     private ConfigCollection<WorkBookConfig> workBookConfigs = new ConfigCollection<>();
 
     public PackageCreator(ConfigCollection<SheetConfig> sheetConfigs) {

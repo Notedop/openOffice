@@ -31,9 +31,9 @@ public class RelPartCreator extends PartsCreator<RelConfig> {
                 relConfig -> {
                     String fullUri = relConfig.getUri() + relConfig.getName();
                     if (!sortedConfig.containsKey(fullUri)) {
-                        List<RelConfig> relConfigs = new ArrayList<>();
+                        List<RelConfig> configs = new ArrayList<>();
                         relConfigs.add(relConfig);
-                        sortedConfig.put(fullUri, relConfigs);
+                        sortedConfig.put(fullUri, configs);
                     } else {
                         sortedConfig.get(fullUri).add(relConfig);
                     }
