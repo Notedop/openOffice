@@ -1,10 +1,9 @@
 package com.rvh.openoffice;
 
+import com.rvh.openoffice.parts.RelPartCreator;
 import com.rvh.openoffice.parts.SheetPartsCreator;
 import com.rvh.openoffice.parts.WorkBookPartCreator;
-import com.rvh.openoffice.parts.config.ConfigCollection;
-import com.rvh.openoffice.parts.config.SheetConfig;
-import com.rvh.openoffice.parts.config.WorkBookConfig;
+import com.rvh.openoffice.parts.config.*;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
@@ -19,10 +18,18 @@ import java.util.Enumeration;
 
 public class PackageCreator {
 
-    private ConfigCollection<SheetConfig> configCollection;
+    //must be provided via constructor
+    private ConfigCollection<SheetConfig> sheetConfigs;
 
-    public PackageCreator(ConfigCollection<SheetConfig> configCollection) {
-        this.configCollection = configCollection;
+    //will be populated during processing
+    private ConfigCollection<RelConfig> relConfigs = new ConfigCollection<>();
+    ;
+    private ConfigCollection<ContentTypeConfig> contentTypeConfigs = new ConfigCollection<>();
+    ;
+    private ConfigCollection<WorkBookConfig> workBookConfigs = new ConfigCollection<>();
+
+    public PackageCreator(ConfigCollection<SheetConfig> sheetConfigs) {
+        this.sheetConfigs = sheetConfigs;
     }
 
     public void generate(File template, String entry, OutputStream out) throws IOException, XMLStreamException {
@@ -41,17 +48,19 @@ public class PackageCreator {
                     }
                 }
 
-                ConfigCollection<WorkBookConfig> workBookConfigs = new ConfigCollection<>();
-                SheetPartsCreator sheetPartsCreator = new SheetPartsCreator(zos, configCollection);
+
+                SheetPartsCreator sheetPartsCreator = new SheetPartsCreator(zos, sheetConfigs, workBookConfigs, relConfigs, contentTypeConfigs);
                 sheetPartsCreator.createPart();
                 WorkBookPartCreator wbCreator = new WorkBookPartCreator(zos, workBookConfigs);
                 wbCreator.createPart();
+                RelPartCreator relPartCreator = new RelPartCreator(zos, relConfigs);
+                relPartCreator.createPart();
             }
         }
     }
 
-    public void setConfigCollection(ConfigCollection<SheetConfig> sheetConfigCollection) {
-        this.configCollection = sheetConfigCollection;
+    public void setSheetConfigs(ConfigCollection<SheetConfig> sheetConfigCollection) {
+        this.sheetConfigs = sheetConfigCollection;
     }
 
     private void copyStream(InputStream in, OutputStream out) throws IOException {

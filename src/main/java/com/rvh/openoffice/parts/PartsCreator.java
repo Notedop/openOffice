@@ -8,26 +8,27 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
-//TODO: Make PartsCreator a subject within observer pattern
 public abstract class PartsCreator<t extends Config> {
 
-    protected XMLStreamWriter xsw;
     protected final ZipArchiveOutputStream zos;
-    XMLOutputFactory xof = XMLOutputFactory.newFactory();
-    private String partName;
+    protected XMLStreamWriter xsw;
     protected ConfigCollection<t> configCollection;
     protected Config config;
+    protected XMLOutputFactory xof = XMLOutputFactory.newFactory();
+    private String partName;
 
     public PartsCreator(ZipArchiveOutputStream zos, ConfigCollection<t> configCollection) {
         this.zos = zos;
         this.configCollection = configCollection;
+        try {
+            xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
     }
 
-    public PartsCreator(ZipArchiveOutputStream zos, Config config) {
-        this.zos = zos;
-        this.config = config;
-    }
 
     public abstract void createPart() throws XMLStreamException, IOException;
 
