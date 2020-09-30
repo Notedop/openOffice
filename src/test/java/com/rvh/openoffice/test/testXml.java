@@ -84,12 +84,12 @@ class testXml extends h2DatabaseTests {
         OutputStream fos = new FileOutputStream(outputFile);
         File template = new File(this.getClass().getClassLoader().getResource("template.xlsx").getFile());
 
-        ConfigCollection<SheetConfig> configs = new ConfigCollection<>();
-        TableConfig tableConfig = new TableConfig("main");
-        configs.addConfig(new SheetConfig("sheet1", getDataSource(),"select * from excel_test_data", 1000, tableConfig));
-        configs.addConfig(new SheetConfig("sheet2", getDataSource(),"select * from excel_test_data", 50, tableConfig));
+        ConfigCollection<SheetConfig> sheetConfigs = new ConfigCollection<>();
+        TableConfig tableConfig = new TableConfig("main", "1");
+        sheetConfigs.addConfig(new SheetConfig("sheet1", getDataSource(),"select * from excel_test_data", 1000, tableConfig, "1"));
+        sheetConfigs.addConfig(new SheetConfig("sheet2", getDataSource(),"select * from excel_test_data", 50, tableConfig, "1"));
 
-        PackageCreator creator = new PackageCreator(configs);
+        PackageCreator creator = new PackageCreator(sheetConfigs);
 
         creator.generate(template, "sheet1", fos);
         fos.close();

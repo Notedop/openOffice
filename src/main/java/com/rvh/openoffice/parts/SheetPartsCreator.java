@@ -1,14 +1,12 @@
 package com.rvh.openoffice.parts;
 
 import com.rvh.openoffice.consumer.WorkSheetRowHandler;
-import com.rvh.openoffice.parts.config.ConfigCollection;
-import com.rvh.openoffice.parts.config.ConfigType;
-import com.rvh.openoffice.parts.config.SheetConfig;
+import com.rvh.openoffice.parts.config.*;
+import com.rvh.openoffice.parts.enums.RelationTypes;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -19,8 +17,19 @@ import java.io.OutputStreamWriter;
  */
 public class SheetPartsCreator extends PartsCreator<SheetConfig> {
 
-    public SheetPartsCreator(ZipArchiveOutputStream zos, ConfigCollection<SheetConfig> config) {
+    ConfigCollection<WorkBookConfig> workBookConfigs;
+    private ConfigCollection<RelConfig> relConfigs;
+    private ConfigCollection<ContentTypeConfig> contentTypeConfigs;
+
+    public SheetPartsCreator(ZipArchiveOutputStream zos, ConfigCollection<SheetConfig> config,
+                             ConfigCollection<WorkBookConfig> workBookConfigs,
+                             ConfigCollection<RelConfig> relConfigs,
+                             ConfigCollection<ContentTypeConfig> contentTypeConfigs) {
+
         super(zos, config);
+        this.workBookConfigs = workBookConfigs;
+        this.relConfigs = relConfigs;
+        this.contentTypeConfigs = contentTypeConfigs;
     }
 
     @Override
@@ -28,36 +37,40 @@ public class SheetPartsCreator extends PartsCreator<SheetConfig> {
 
         for (SheetConfig config : configCollection.getConfigs()) {
             if (config != null) {
-                if (config.getType().equals(ConfigType.SHEET)) {
-                    SheetConfig sheetConfig = (SheetConfig) config;
 
-                    setOriginalPartName(config.getName());
-                    xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
+                setOriginalPartName(config.getName());
+                xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
 
-                    WorkSheetRowHandler handler = new WorkSheetRowHandler(xsw, sheetConfig.getMaxRows(), this);
+                WorkSheetRowHandler handler = new WorkSheetRowHandler(xsw, config.getMaxRows(), this);
 
-                    createHeader(sheetConfig.getName());
+                createHeader(config.getName());
 
-                    //the handler will directly write from result set to the writer
-                    new JdbcTemplate(sheetConfig.getDataSource()).query(sheetConfig.getSql(), handler);
+                //the handler will directly write from result set to the writer
+                new JdbcTemplate(config.getDataSource()).query(config.getSql(), handler);
 
-                    createFooter();
-                } else {
-                    //log error, throw exception
-                }
+                createFooter();
             } else {
                 //log error, throw exception
             }
         }
-
-
     }
 
     @Override
     public void createHeader(String name) throws XMLStreamException, IOException {
 
-        //TODO: everytime we create a sheet, we need make sure the sheet is registered in the workbook
-        zos.putArchiveEntry(new ZipArchiveEntry("xl\\worksheets\\" + name + ".xml"));
+        String sheet = "xl/worksheets/" + name + ".xml";
+
+        zos.putArchiveEntry(new ZipArchiveEntry(sheet));
+
+        //creating a new sheet; this needs to be referenced in both the workbook.xml.rels and workbook.xml
+        //Create relation between sheet and workbook
+        String relId = "rId" + (relConfigs.countConfigByName("workbook.xml.rels") + 1);
+        relConfigs.addConfig(new RelConfig("workbook.xml.rels", relId, RelationTypes.WORKSHEET, sheet, "xl/_rels/"));
+
+
+        //use relation in workbook config so that it can be used in the workbook part.
+        String sheetId = String.valueOf(workBookConfigs.getConfigs().size() + 1);
+        workBookConfigs.addConfig(new WorkBookConfig(name, sheetId, relId));
 
         xsw.writeStartDocument();
         xsw.writeStartElement("worksheet");

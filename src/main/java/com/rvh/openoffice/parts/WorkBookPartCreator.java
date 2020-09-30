@@ -7,7 +7,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.List;
 
 public class WorkBookPartCreator extends PartsCreator<WorkBookConfig> {
@@ -18,25 +17,36 @@ public class WorkBookPartCreator extends PartsCreator<WorkBookConfig> {
 
     @Override
     public void createPart() throws XMLStreamException, IOException {
-        xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
-        createHeader("xl\\workbook.xml");
+
+        createHeader("xl/workbook.xml");
         createFooter();
     }
 
     @Override
     public void createHeader(String name) throws XMLStreamException, IOException {
+
         zos.putArchiveEntry(new ZipArchiveEntry(name));
+        xsw.writeStartDocument();
         xsw.writeStartElement("workbook");
+        xsw.writeNamespace("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
+        xsw.writeNamespace("r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships");
+        xsw.writeNamespace("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
+        xsw.writeAttribute("mc:Ignorable", "x14ac");
+        xsw.writeNamespace("x15", "http://schemas.microsoft.com/office/spreadsheetml/2010/11/main");
         xsw.writeStartElement("sheets");
 
         List<WorkBookConfig> configs = configCollection.getConfigs();
-        for (int i = 0; i < configs.size(); i++) {
-            WorkBookConfig workBookConfig = configs.get(i);
-            xsw.writeEmptyElement("sheet");
-            xsw.writeAttribute("name", workBookConfig.getName());
-            xsw.writeAttribute("sheetId", String.valueOf(i));
-            xsw.writeAttribute("r:id", "rId" + i);
-        }
+        configs.forEach(workBookConfig -> {
+            try {
+                xsw.writeEmptyElement("sheet");
+                xsw.writeAttribute("name", workBookConfig.getName());
+                xsw.writeAttribute("sheetId", workBookConfig.getSheetId());
+                xsw.writeAttribute("r:id", workBookConfig.getId());
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            }
+        });
+
         xsw.writeEndElement();//sheets
     }
 
