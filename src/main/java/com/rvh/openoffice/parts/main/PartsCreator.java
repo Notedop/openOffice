@@ -10,16 +10,16 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-public abstract class PartsCreator<t extends Config> {
+public abstract class PartsCreator<T extends Config> {
 
     protected final ZipArchiveOutputStream zos;
     protected XMLStreamWriter xsw;
-    protected ConfigCollection<t> configCollection;
+    protected ConfigCollection<T> configCollection;
     protected Config config;
     protected XMLOutputFactory xof = XMLOutputFactory.newFactory();
     private String partName;
 
-    public PartsCreator(ZipArchiveOutputStream zos, ConfigCollection<t> configCollection) {
+    public PartsCreator(ZipArchiveOutputStream zos, ConfigCollection<T> configCollection) {
         this.zos = zos;
         this.configCollection = configCollection;
         try {
