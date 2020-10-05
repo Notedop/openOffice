@@ -61,7 +61,7 @@ public class SheetPartsCreator extends PartsCreator<SheetConfig> {
     @Override
     public void createHeader(String name) throws XMLStreamException, IOException {
 
-        String sheet = "xl/worksheets/" + name + ".xml";
+        String sheet = "worksheets/" + name + ".xml";
 
         zos.putArchiveEntry(new ZipArchiveEntry(sheet));
 

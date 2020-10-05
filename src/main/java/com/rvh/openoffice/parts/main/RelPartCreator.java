@@ -32,7 +32,7 @@ public class RelPartCreator extends PartsCreator<RelConfig> {
                     String fullUri = relConfig.getUri() + relConfig.getName();
                     if (!sortedConfig.containsKey(fullUri)) {
                         List<RelConfig> configs = new ArrayList<>();
-                        relConfigs.add(relConfig);
+                        configs.add(relConfig);
                         sortedConfig.put(fullUri, configs);
                     } else {
                         sortedConfig.get(fullUri).add(relConfig);
@@ -50,9 +50,9 @@ public class RelPartCreator extends PartsCreator<RelConfig> {
     @Override
     public void createHeader(String name) throws XMLStreamException, IOException {
         zos.putArchiveEntry(new ZipArchiveEntry(name));
-        xsw.writeStartDocument();
+        xsw.writeStartDocument("UTF-8", "1.0");
         xsw.writeStartElement("Relationships");
-        xsw.writeNamespace("xmlns", "http://schemas.openxmlformats.org/officeDocument/2006/relationships");
+        xsw.writeNamespace("xmlns", "http://schemas.openxmlformats.org/package/2006/relationships");
 
         for (RelConfig relConfig : relConfigs) {
             createRelationShip(relConfig);
