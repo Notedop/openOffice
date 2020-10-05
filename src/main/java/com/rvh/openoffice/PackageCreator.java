@@ -1,6 +1,7 @@
 package com.rvh.openoffice;
 
 import com.rvh.openoffice.parts.main.ContentTypePartCreator;
+import com.rvh.openoffice.parts.main.CorePartCreator;
 import com.rvh.openoffice.parts.main.RelPartCreator;
 import com.rvh.openoffice.parts.main.enums.RelationTypes;
 import com.rvh.openoffice.parts.spreadsheet.SheetPartsCreator;
@@ -70,6 +71,9 @@ public class PackageCreator {
 
                 ContentTypePartCreator contentTypePartCreator = new ContentTypePartCreator(zos,contentTypeConfigs);
                 contentTypePartCreator.createPart();
+
+                CorePartCreator corePartCreator = new CorePartCreator(zos, new ConfigCollection<>());
+                corePartCreator.createPart();
 
             }
         }
