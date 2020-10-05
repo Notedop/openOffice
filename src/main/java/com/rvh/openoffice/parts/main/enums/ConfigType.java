@@ -10,7 +10,10 @@ public enum ConfigType {
      ROW,
      CELL,
      RELATION,
-     STYLE
+     STYLE,
+     CONTENT_TYPE,
+     CONTENT_TYPE_DEFAULT,
+     CONTENT_TYPE_OVERRIDE
 }
 
 

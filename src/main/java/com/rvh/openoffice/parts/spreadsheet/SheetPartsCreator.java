@@ -61,23 +61,26 @@ public class SheetPartsCreator extends PartsCreator<SheetConfig> {
     @Override
     public void createHeader(String name) throws XMLStreamException, IOException {
 
-        String sheet = "worksheets/" + name + ".xml";
-
-        zos.putArchiveEntry(new ZipArchiveEntry(sheet));
+        String location = "xl/worksheets/" + name + ".xml";
+        zos.putArchiveEntry(new ZipArchiveEntry(location));
 
         //creating a new sheet; this needs to be referenced in both the workbook.xml.rels and workbook.xml
         //Create relation between sheet and workbook
         String relId = "rId" + (relConfigs.countConfigByName("workbook.xml.rels") + 1);
-        relConfigs.addConfig(new RelConfig("workbook.xml.rels", relId, RelationTypes.WORKSHEET, sheet, "xl/_rels/"));
-
+        String target = "worksheets/" + name + ".xml";
+        relConfigs.addConfig(new RelConfig("workbook.xml.rels", relId, RelationTypes.WORKSHEET, target, "xl/_rels/"));
 
         //use relation in workbook config so that it can be used in the workbook part.
         String sheetId = String.valueOf(workBookConfigs.getConfigs().size() + 1);
         workBookConfigs.addConfig(new WorkBookConfig(name, sheetId, relId));
 
+        //register part in ContentType
+        contentTypeConfigs.addConfig(new ContentTypeConfig("Override", "/" + location, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"));
+
+
         xsw.writeStartDocument();
         xsw.writeStartElement("worksheet");
-        xsw.writeNamespace("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
+        xsw.writeDefaultNamespace( "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
         xsw.writeNamespace("r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships");
         xsw.writeNamespace("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
         xsw.writeAttribute("mc:Ignorable", "x14ac");

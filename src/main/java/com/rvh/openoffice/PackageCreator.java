@@ -1,6 +1,8 @@
 package com.rvh.openoffice;
 
+import com.rvh.openoffice.parts.main.ContentTypePartCreator;
 import com.rvh.openoffice.parts.main.RelPartCreator;
+import com.rvh.openoffice.parts.main.enums.RelationTypes;
 import com.rvh.openoffice.parts.spreadsheet.SheetPartsCreator;
 import com.rvh.openoffice.parts.spreadsheet.WorkBookPartCreator;
 import com.rvh.openoffice.parts.main.config.*;
@@ -48,13 +50,27 @@ public class PackageCreator {
                     }
                 }
 
+                //create main relation configurations
+                //TODO: move and make prettier
+                String relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
+                relConfigs.addConfig(new RelConfig(".rels", relId, RelationTypes.EXTENDED,"docProps/app.xml", "_rels/" ));
+                relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
+                relConfigs.addConfig(new RelConfig(".rels", relId, RelationTypes.CORE,"docProps/core.xml", "_rels/" ));
+                relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
+                relConfigs.addConfig(new RelConfig(".rels", relId, RelationTypes.OFFICE_DOC,"xl/workbook.xml", "_rels/" ));
 
                 SheetPartsCreator sheetPartsCreator = new SheetPartsCreator(zos, sheetConfigs, workBookConfigs, relConfigs, contentTypeConfigs);
                 sheetPartsCreator.createPart();
-                WorkBookPartCreator wbCreator = new WorkBookPartCreator(zos, workBookConfigs);
+
+                WorkBookPartCreator wbCreator = new WorkBookPartCreator(zos, workBookConfigs, contentTypeConfigs);
                 wbCreator.createPart();
-                RelPartCreator relPartCreator = new RelPartCreator(zos, relConfigs);
+
+                RelPartCreator relPartCreator = new RelPartCreator(zos, relConfigs, contentTypeConfigs);
                 relPartCreator.createPart();
+
+                ContentTypePartCreator contentTypePartCreator = new ContentTypePartCreator(zos,contentTypeConfigs);
+                contentTypePartCreator.createPart();
+
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.rvh.openoffice.parts.main;
 
 import com.rvh.openoffice.parts.main.config.ConfigCollection;
+import com.rvh.openoffice.parts.main.config.ContentTypeConfig;
 import com.rvh.openoffice.parts.main.config.RelConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -16,7 +17,7 @@ public class RelPartCreator extends PartsCreator<RelConfig> {
 
     private List<RelConfig> relConfigs;
 
-    public RelPartCreator(ZipArchiveOutputStream zos, ConfigCollection<RelConfig> configCollection) {
+    public RelPartCreator(ZipArchiveOutputStream zos, ConfigCollection<RelConfig> configCollection, ConfigCollection<ContentTypeConfig> contentTypeConfigs) {
         super(zos, configCollection);
     }
 

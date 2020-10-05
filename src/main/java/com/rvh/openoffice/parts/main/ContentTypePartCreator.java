@@ -10,6 +10,8 @@ import java.io.IOException;
 
 public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
 
+    private static final String CONTENT_TYPE = "[Content_Types].xml";
+
     public ContentTypePartCreator(ZipArchiveOutputStream zos, ConfigCollection<ContentTypeConfig> configCollection) {
         super(zos, configCollection);
     }
@@ -17,15 +19,52 @@ public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
     @Override
     public void createPart() throws XMLStreamException, IOException {
 
+        createHeader(CONTENT_TYPE);
+
+        //TODO: remove after CORE and APP creator implementation
+        xsw.writeEmptyElement("Override");
+        xsw.writeAttribute("PartName", "/xl/workbook.xml");
+        xsw.writeAttribute("ContentType", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
+
+        for (ContentTypeConfig config : configCollection.getConfigs()) {
+            xsw.writeEmptyElement(config.getName());
+            xsw.writeAttribute("PartName", config.getPartName());
+            xsw.writeAttribute("ContentType", config.getContentType());
+
+        }
+
+        //TODO: remove after CORE and APP creator implementation
+        xsw.writeEmptyElement("Override");
+        xsw.writeAttribute("PartName", "/docProps/core.xml");
+        xsw.writeAttribute("ContentType", "application/vnd.openxmlformats-package.core-properties+xml");
+        xsw.writeEmptyElement("Override");
+        xsw.writeAttribute("PartName", "/docProps/app.xml");
+        xsw.writeAttribute("ContentType", "application/vnd.openxmlformats-officedocument.extended-properties+xml");
+        createFooter();
+
     }
 
     @Override
     public void createHeader(String name) throws XMLStreamException, IOException {
-        zos.putArchiveEntry(new ZipArchiveEntry("[Content_Types].xml"));
+        zos.putArchiveEntry(new ZipArchiveEntry(name));
+        xsw.writeStartDocument("UTF-8", "1.0");
+        xsw.writeStartElement("Types");
+        xsw.writeDefaultNamespace("http://schemas.openxmlformats.org/package/2006/content-types");
+        writeDefaultElement("rels", "application/vnd.openxmlformats-package.relationships+xml");
+        writeDefaultElement("xml", "application/xml");
+
+    }
+
+    private void writeDefaultElement(String extension, String contentType) throws XMLStreamException {
+        xsw.writeEmptyElement("Default");
+        xsw.writeAttribute("Extension", extension);
+        xsw.writeAttribute("ContentType", contentType);
     }
 
     @Override
     public void createFooter() throws XMLStreamException, IOException {
+        xsw.writeEndElement();//Types
+        xsw.flush();
         zos.closeArchiveEntry();
     }
 }
