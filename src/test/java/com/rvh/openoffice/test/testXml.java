@@ -2,6 +2,7 @@ package com.rvh.openoffice.test;
 
 import com.rvh.openoffice.PackageCreator;
 import com.rvh.openoffice.parts.main.config.ConfigCollection;
+import com.rvh.openoffice.parts.main.config.CoreConfig;
 import com.rvh.openoffice.parts.spreadsheet.config.SheetConfig;
 import com.rvh.openoffice.parts.spreadsheet.config.TableConfig;
 import com.rvh.openoffice.test.basetestcase.h2DatabaseTests;
@@ -85,11 +86,15 @@ class testXml extends h2DatabaseTests {
         File template = new File(this.getClass().getClassLoader().getResource("template.xlsx").getFile());
 
         ConfigCollection<SheetConfig> sheetConfigs = new ConfigCollection<>();
+
+        CoreConfig coreConfig = new CoreConfig();
+        coreConfig.setCreator("Raoul van Hal");
+        coreConfig.setVersion("2.0");
+
         TableConfig tableConfig = new TableConfig("main", "1");
         sheetConfigs.addConfig(new SheetConfig("sheet1", getDataSource(),"select * from excel_test_data", 1000, tableConfig, "1"));
         sheetConfigs.addConfig(new SheetConfig("sheet2", getDataSource(),"select * from excel_test_data", 50, tableConfig, "1"));
-
-        PackageCreator creator = new PackageCreator(sheetConfigs);
+        PackageCreator creator = new PackageCreator(coreConfig, sheetConfigs);
 
         creator.generate(template, "sheet1", fos);
         fos.close();

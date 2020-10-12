@@ -13,6 +13,7 @@ public enum ConfigType {
      STYLE,
      CONTENT_TYPE,
      CONTENT_TYPE_DEFAULT,
+     CORE,
      CONTENT_TYPE_OVERRIDE
 }
 

@@ -22,16 +22,17 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 
 public class PackageCreator {
-
     //must be provided via constructor
     private ConfigCollection<SheetConfig> sheetConfigs;
+    private final CoreConfig coreConfig;
 
     //will be populated during processing
-    private ConfigCollection<RelConfig> relConfigs = new ConfigCollection<>();
-    private ConfigCollection<ContentTypeConfig> contentTypeConfigs = new ConfigCollection<>();
-    private ConfigCollection<WorkBookConfig> workBookConfigs = new ConfigCollection<>();
+    private final ConfigCollection<RelConfig> relConfigs = new ConfigCollection<>();
+    private final ConfigCollection<ContentTypeConfig> contentTypeConfigs = new ConfigCollection<>();
+    private final ConfigCollection<WorkBookConfig> workBookConfigs = new ConfigCollection<>();
 
-    public PackageCreator(ConfigCollection<SheetConfig> sheetConfigs) {
+    public PackageCreator(CoreConfig coreConfig, ConfigCollection<SheetConfig> sheetConfigs) {
+        this.coreConfig = coreConfig;
         this.sheetConfigs = sheetConfigs;
     }
 
@@ -55,10 +56,12 @@ public class PackageCreator {
                 //TODO: move and make prettier
                 String relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
                 relConfigs.addConfig(new RelConfig(".rels", relId, RelationTypes.EXTENDED,"docProps/app.xml", "_rels/" ));
-                relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
-                relConfigs.addConfig(new RelConfig(".rels", relId, RelationTypes.CORE,"docProps/core.xml", "_rels/" ));
+
                 relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
                 relConfigs.addConfig(new RelConfig(".rels", relId, RelationTypes.OFFICE_DOC,"xl/workbook.xml", "_rels/" ));
+
+                CorePartCreator corePartCreator = new CorePartCreator(zos, coreConfig, relConfigs, contentTypeConfigs);
+                corePartCreator.createPart();
 
                 SheetPartsCreator sheetPartsCreator = new SheetPartsCreator(zos, sheetConfigs, workBookConfigs, relConfigs, contentTypeConfigs);
                 sheetPartsCreator.createPart();
@@ -71,9 +74,6 @@ public class PackageCreator {
 
                 ContentTypePartCreator contentTypePartCreator = new ContentTypePartCreator(zos,contentTypeConfigs);
                 contentTypePartCreator.createPart();
-
-                CorePartCreator corePartCreator = new CorePartCreator(zos, new ConfigCollection<>());
-                corePartCreator.createPart();
 
             }
         }

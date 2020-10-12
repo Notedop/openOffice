@@ -21,11 +21,6 @@ public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
 
         createHeader(CONTENT_TYPE);
 
-        //TODO: remove after CORE and APP creator implementation
-        xsw.writeEmptyElement("Override");
-        xsw.writeAttribute("PartName", "/xl/workbook.xml");
-        xsw.writeAttribute("ContentType", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
-
         for (ContentTypeConfig config : configCollection.getConfigs()) {
             xsw.writeEmptyElement(config.getName());
             xsw.writeAttribute("PartName", config.getPartName());
@@ -33,13 +28,11 @@ public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
 
         }
 
-        //TODO: remove after CORE and APP creator implementation
-        xsw.writeEmptyElement("Override");
-        xsw.writeAttribute("PartName", "/docProps/core.xml");
-        xsw.writeAttribute("ContentType", "application/vnd.openxmlformats-package.core-properties+xml");
+        //TODO: move to AppPartCreator once implemented
         xsw.writeEmptyElement("Override");
         xsw.writeAttribute("PartName", "/docProps/app.xml");
         xsw.writeAttribute("ContentType", "application/vnd.openxmlformats-officedocument.extended-properties+xml");
+
         createFooter();
 
     }

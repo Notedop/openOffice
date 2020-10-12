@@ -30,6 +30,10 @@ public class WorkBookPartCreator extends PartsCreator<WorkBookConfig> {
     @Override
     public void createHeader(String name) throws XMLStreamException, IOException {
 
+        //register part in ContentType
+        contentTypeConfigs.addConfig(new ContentTypeConfig("Override", "/xl/workbook.xml",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"));
+
         zos.putArchiveEntry(new ZipArchiveEntry(name));
 
         xsw.writeStartDocument();

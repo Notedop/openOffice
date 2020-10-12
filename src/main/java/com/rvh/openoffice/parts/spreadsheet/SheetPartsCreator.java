@@ -2,7 +2,9 @@ package com.rvh.openoffice.parts.spreadsheet;
 
 import com.rvh.openoffice.consumer.WorkSheetRowHandler;
 import com.rvh.openoffice.parts.main.PartsCreator;
-import com.rvh.openoffice.parts.main.config.*;
+import com.rvh.openoffice.parts.main.config.ConfigCollection;
+import com.rvh.openoffice.parts.main.config.ContentTypeConfig;
+import com.rvh.openoffice.parts.main.config.RelConfig;
 import com.rvh.openoffice.parts.main.enums.RelationTypes;
 import com.rvh.openoffice.parts.spreadsheet.config.SheetConfig;
 import com.rvh.openoffice.parts.spreadsheet.config.WorkBookConfig;
@@ -75,12 +77,13 @@ public class SheetPartsCreator extends PartsCreator<SheetConfig> {
         workBookConfigs.addConfig(new WorkBookConfig(name, sheetId, relId));
 
         //register part in ContentType
-        contentTypeConfigs.addConfig(new ContentTypeConfig("Override", "/" + location, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"));
+        contentTypeConfigs.addConfig(new ContentTypeConfig("Override", "/" + location,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"));
 
 
         xsw.writeStartDocument();
         xsw.writeStartElement("worksheet");
-        xsw.writeDefaultNamespace( "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
+        xsw.writeDefaultNamespace("http://schemas.openxmlformats.org/spreadsheetml/2006/main");
         xsw.writeNamespace("r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships");
         xsw.writeNamespace("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
         xsw.writeAttribute("mc:Ignorable", "x14ac");
