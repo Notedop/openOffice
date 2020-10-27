@@ -1,5 +1,6 @@
 package com.rvh.openoffice.parts.spreadsheet;
 
+import com.rvh.openoffice.consumer.SpringRowCallBackHandler;
 import com.rvh.openoffice.consumer.WorkSheetRowHandler;
 import com.rvh.openoffice.parts.main.PartsCreator;
 import com.rvh.openoffice.parts.main.config.ConfigCollection;
@@ -46,7 +47,7 @@ public class SheetPartsCreator extends PartsCreator<SheetConfig> {
                 setOriginalPartName(config.getName());
                 xsw = xof.createXMLStreamWriter(new OutputStreamWriter(zos));
 
-                WorkSheetRowHandler handler = new WorkSheetRowHandler(xsw, config.getMaxRows(), this);
+                SpringRowCallBackHandler handler = new SpringRowCallBackHandler(xsw, config.getMaxRows(), this);
 
                 createHeader(config.getName());
 

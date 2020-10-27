@@ -1,7 +1,6 @@
 package com.rvh.openoffice.consumer;
 
 import com.rvh.openoffice.parts.spreadsheet.SheetPartsCreator;
-import org.springframework.jdbc.core.RowCallbackHandler;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -12,7 +11,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class WorkSheetRowHandler implements RowCallbackHandler {
+public class WorkSheetRowHandler {
 
     private final XMLStreamWriter xmlStreamWriter;
     private final SheetPartsCreator sheetPartsCreator;
@@ -28,7 +27,6 @@ public class WorkSheetRowHandler implements RowCallbackHandler {
         this.sheetPartsCreator = sheetPartsCreator;
     }
 
-    @Override
     public void processRow(ResultSet rs) throws SQLException {
 
         if (processedRows < maxRows) {
