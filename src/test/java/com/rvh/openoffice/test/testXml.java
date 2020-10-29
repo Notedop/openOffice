@@ -8,6 +8,8 @@ import com.rvh.openoffice.parts.spreadsheet.config.TableConfig;
 import com.rvh.openoffice.test.basetestcase.h2DatabaseTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import javax.xml.stream.XMLStreamException;
@@ -20,6 +22,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 class testXml extends h2DatabaseTests {
+
+    Logger log = LoggerFactory.getLogger(h2DatabaseTests.class);
 
     @BeforeEach
     void prepareData() throws SQLException {
@@ -74,7 +78,7 @@ class testXml extends h2DatabaseTests {
 
         }
 
-        System.out.println(st.executeUpdate(sb.toString()));
+        log.debug("Records inserted: {}", st.executeUpdate(sb.toString()));
 
     }
 
@@ -98,7 +102,5 @@ class testXml extends h2DatabaseTests {
 
         creator.generate(template, "sheet1", fos);
         fos.close();
-
     }
-
 }

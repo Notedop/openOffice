@@ -1,6 +1,8 @@
 package com.rvh.openoffice.consumer;
 
 import com.rvh.openoffice.parts.spreadsheet.SheetPartsCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -8,8 +10,6 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class WorkSheetRowHandler {
 
@@ -19,7 +19,7 @@ public class WorkSheetRowHandler {
     private int processedSheets;
     private int processedRows;
 
-    private final Logger log = Logger.getLogger(this.getClass().getName());
+    private final Logger log = LoggerFactory.getLogger(WorkSheetRowHandler.class);
 
     public WorkSheetRowHandler(XMLStreamWriter xmlStreamWriter, int maxRows, SheetPartsCreator sheetPartsCreator) {
         this.xmlStreamWriter = xmlStreamWriter;
@@ -49,13 +49,13 @@ public class WorkSheetRowHandler {
         ResultSetMetaData metaData = rs.getMetaData();
         int columnCount = metaData.getColumnCount();
         //TODO: Check columncount against any possible configuration that has been passed
-        log.log(Level.FINE, "writng row");
+        log.debug("writing row");
         try {
             //TODO: Read row formatting from configuration and apply here
             xmlStreamWriter.writeStartElement("row");
             xmlStreamWriter.writeAttribute("r", String.valueOf(processedRows + 1));
             for (int i = 1; i <= columnCount; i++) {
-                log.log(Level.FINE, "writng cell");
+                log.debug("writng cell");
                 //TODO: Read cell formatting from configuration and apply here
                 //TODO: use columntype to set appropiate cell type
                 xmlStreamWriter.writeStartElement("c");
