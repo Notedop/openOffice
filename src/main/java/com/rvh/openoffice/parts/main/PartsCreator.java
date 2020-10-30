@@ -29,6 +29,18 @@ public abstract class PartsCreator<T extends Config> {
         }
     }
 
+    public void writeBasicElement(String element, String data) throws XMLStreamException {
+        writeBasicElement(null, element, data);
+    }
+    public void writeBasicElement(String nameSpace, String element, String data) throws XMLStreamException {
+        if (nameSpace != null && !nameSpace.isEmpty()) {
+            xsw.writeStartElement(nameSpace, element);
+        } else {
+            xsw.writeStartElement(element);
+        }
+        xsw.writeCharacters(data);
+        xsw.writeEndElement();
+    }
 
     public abstract void createPart() throws XMLStreamException, IOException;
 

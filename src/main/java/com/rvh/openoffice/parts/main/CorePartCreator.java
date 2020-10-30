@@ -47,25 +47,21 @@ public class CorePartCreator extends PartsCreator<CoreConfig>{
 
         writeNameSpace();
 
-        writeBasic("http://schemas.openxmlformats.org/package/2006/metadata/core-properties","category", coreConfig.getCategory());
-        writeBasic("http://schemas.openxmlformats.org/package/2006/metadata/core-properties","contentStatus", coreConfig.getContentStatus());
+        writeBasicElement("http://schemas.openxmlformats.org/package/2006/metadata/core-properties","category", coreConfig.getCategory());
+        writeBasicElement("http://schemas.openxmlformats.org/package/2006/metadata/core-properties","contentStatus", coreConfig.getContentStatus());
         writeCreatedDate();
-        writeBasic("http://purl.org/dc/elements/1.1/", "creator", coreConfig.getCreator());
-        writeBasic("http://purl.org/dc/elements/1.1/","description", coreConfig.getDescription());
-        writeBasic("http://schemas.openxmlformats.org/package/2006/metadata/core-properties", "lastModifiedBy", coreConfig.getLastModifiedBy());
-        writeBasic("http://purl.org/dc/elements/1.1/","language", coreConfig.getLanguage());
+        writeBasicElement("http://purl.org/dc/elements/1.1/", "creator", coreConfig.getCreator());
+        writeBasicElement("http://purl.org/dc/elements/1.1/","description", coreConfig.getDescription());
+        writeBasicElement("http://schemas.openxmlformats.org/package/2006/metadata/core-properties", "lastModifiedBy",
+                coreConfig.getLastModifiedBy());
+        writeBasicElement("http://purl.org/dc/elements/1.1/","language", coreConfig.getLanguage());
         writeModifiedDate();
-        writeBasic("http://purl.org/dc/elements/1.1/","title", coreConfig.getTitle());
-        writeBasic("http://purl.org/dc/elements/1.1/","subject", coreConfig.getSubject());
-        writeBasic("http://schemas.openxmlformats.org/package/2006/metadata/core-properties","version", coreConfig.getVersion());
+        writeBasicElement("http://purl.org/dc/elements/1.1/","title", coreConfig.getTitle());
+        writeBasicElement("http://purl.org/dc/elements/1.1/","subject", coreConfig.getSubject());
+        writeBasicElement("http://schemas.openxmlformats.org/package/2006/metadata/core-properties","version", coreConfig.getVersion());
 
     }
 
-    private void writeBasic(String nameSpace, String element, String data) throws XMLStreamException {
-        xsw.writeStartElement(nameSpace, element);
-        xsw.writeCharacters(data);
-        xsw.writeEndElement();
-    }
 
     private void writeNameSpace() throws XMLStreamException {
         xsw.writeStartElement( "cp:coreProperties" );
