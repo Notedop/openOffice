@@ -38,6 +38,7 @@ public class PackageCreator {
 
     public void generate(File template, String entry, OutputStream out) throws IOException, XMLStreamException {
 
+        //TODO: Once last part has been implemented, its not required anymore to use a template xlsx file.
         try (ZipSecureFile zip = ZipHelper.openZipFile(template)) {
             try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out)) {
                 Enumeration<? extends ZipArchiveEntry> en = zip.getEntries();

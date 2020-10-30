@@ -1,7 +1,5 @@
 package com.rvh.openoffice.parts.main.config;
 
-import com.rvh.openoffice.parts.main.enums.ConfigType;
-
 import java.time.ZonedDateTime;
 
 public class CoreConfig extends Config {
@@ -19,7 +17,7 @@ public class CoreConfig extends Config {
     private String description = "Open Office XML created by com.rvh.openOffice";
 
     public CoreConfig() {
-        super("core", ConfigType.CORE, null, "docProps/core.xml");
+        super("core", null, "docProps/core.xml");
     }
 
     public String getCreator() {

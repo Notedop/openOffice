@@ -1,7 +1,6 @@
 package com.rvh.openoffice.parts.spreadsheet.config;
 
 import com.rvh.openoffice.parts.main.config.Config;
-import com.rvh.openoffice.parts.main.enums.ConfigType;
 
 import javax.sql.DataSource;
 
@@ -14,7 +13,7 @@ public class SheetConfig extends Config {
 
     public SheetConfig(String name, DataSource dataSource, String sql, int maxRows, TableConfig tableConfig, String id) {
 
-        super(name, ConfigType.SHEET, id, "xl/worksheets/");
+        super(name, id, "xl/worksheets/");
         this.dataSource = dataSource;
         this.sql = sql;
         this.maxRows = maxRows;
@@ -37,4 +36,5 @@ public class SheetConfig extends Config {
     public TableConfig getTableConfig() {
         return tableConfig;
     }
+
 }
