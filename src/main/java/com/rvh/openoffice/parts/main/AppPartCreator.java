@@ -9,6 +9,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 
+import static com.rvh.openoffice.parts.main.enums.NameSpaces.EXTENDED_PROPERTIES;
+
 public class AppPartCreator extends PartsCreator<AppConfig>{
 
     public AppPartCreator(ZipArchiveOutputStream zos, ConfigCollection<AppConfig> configCollection) {
@@ -30,7 +32,7 @@ public class AppPartCreator extends PartsCreator<AppConfig>{
         xsw.writeStartDocument("UTF-8", "1.0");
 
         xsw.writeStartElement( "Properties");
-        xsw.writeNamespace("xmlns", "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties");
+        xsw.writeNamespace("xmlns", EXTENDED_PROPERTIES.getSchema());
 
         writeBasicElement("Application", "Microsoft Excel");
         writeBasicElement("DocSecurity", "0");

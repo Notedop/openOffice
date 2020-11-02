@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.rvh.openoffice.parts.main.enums.NameSpaces.RELATIONSHIPS;
+
 public class RelPartCreator extends PartsCreator<RelConfig> {
 
     private List<RelConfig> relConfigs;
@@ -53,7 +55,7 @@ public class RelPartCreator extends PartsCreator<RelConfig> {
         zos.putArchiveEntry(new ZipArchiveEntry(name));
         xsw.writeStartDocument("UTF-8", "1.0");
         xsw.writeStartElement("Relationships");
-        xsw.writeNamespace("xmlns", "http://schemas.openxmlformats.org/package/2006/relationships");
+        xsw.writeNamespace("xmlns", RELATIONSHIPS.getSchema());
 
         for (RelConfig relConfig : relConfigs) {
             createRelationShip(relConfig);
@@ -64,7 +66,7 @@ public class RelPartCreator extends PartsCreator<RelConfig> {
     private void createRelationShip(RelConfig relConfig) throws XMLStreamException {
         xsw.writeEmptyElement("Relationship");
         xsw.writeAttribute("Id", relConfig.getId());
-        xsw.writeAttribute("Type", relConfig.getRelType().getSchema());
+        xsw.writeAttribute("Type", relConfig.getRelType().getType());
         xsw.writeAttribute("Target", relConfig.getTarget());
 
     }

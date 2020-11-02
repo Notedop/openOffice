@@ -8,7 +8,7 @@ import com.rvh.openoffice.parts.main.config.ConfigCollection;
 import com.rvh.openoffice.parts.main.config.ContentTypeConfig;
 import com.rvh.openoffice.parts.main.config.CoreConfig;
 import com.rvh.openoffice.parts.main.config.RelConfig;
-import com.rvh.openoffice.parts.main.enums.RelationTypes;
+import com.rvh.openoffice.parts.main.enums.RelationShipTypes;
 import com.rvh.openoffice.parts.spreadsheet.SheetPartsCreator;
 import com.rvh.openoffice.parts.spreadsheet.WorkBookPartCreator;
 import com.rvh.openoffice.parts.spreadsheet.config.SheetConfig;
@@ -41,10 +41,10 @@ public class PackageCreator {
 
             //create main relation configurations
             String relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
-            relConfigs.addConfig(new RelConfig(".rels", relId, RelationTypes.EXTENDED, "docProps/app.xml", "_rels/"));
+            relConfigs.addConfig(new RelConfig(".rels", relId, RelationShipTypes.EXTENDED, "docProps/app.xml", "_rels/"));
 
             relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
-            relConfigs.addConfig(new RelConfig(".rels", relId, RelationTypes.OFFICE_DOC, "xl/workbook.xml", "_rels/"));
+            relConfigs.addConfig(new RelConfig(".rels", relId, RelationShipTypes.OFFICE_DOC, "xl/workbook.xml", "_rels/"));
 
             AppPartCreator appPartCreator = new AppPartCreator(zos, null);
             appPartCreator.createPart();

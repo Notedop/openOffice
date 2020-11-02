@@ -8,6 +8,9 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 
+import static com.rvh.openoffice.parts.main.enums.ContentTypes.*;
+import static com.rvh.openoffice.parts.main.enums.NameSpaces.CONTENT_TYPES;
+
 public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
 
     private static final String CONTENT_TYPE = "[Content_Types].xml";
@@ -31,7 +34,7 @@ public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
         //TODO: move to AppPartCreator once implemented
         xsw.writeEmptyElement("Override");
         xsw.writeAttribute("PartName", "/docProps/app.xml");
-        xsw.writeAttribute("ContentType", "application/vnd.openxmlformats-officedocument.extended-properties+xml");
+        xsw.writeAttribute("ContentType", EXTENDED_PROPERTIES.getPart());
 
         createFooter();
 
@@ -42,9 +45,9 @@ public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
         zos.putArchiveEntry(new ZipArchiveEntry(name));
         xsw.writeStartDocument("UTF-8", "1.0");
         xsw.writeStartElement("Types");
-        xsw.writeDefaultNamespace("http://schemas.openxmlformats.org/package/2006/content-types");
-        writeDefaultElement("rels", "application/vnd.openxmlformats-package.relationships+xml");
-        writeDefaultElement("xml", "application/xml");
+        xsw.writeDefaultNamespace(CONTENT_TYPES.getSchema());
+        writeDefaultElement("rels", RELATIONSHIPS.getPart());
+        writeDefaultElement("xml", XML.getPart());
 
     }
 

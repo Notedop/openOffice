@@ -11,6 +11,10 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.util.List;
 
+import static com.rvh.openoffice.parts.main.enums.ContentTypes.WORKBOOK;
+import static com.rvh.openoffice.parts.main.enums.NameSpaces.*;
+import static com.rvh.openoffice.parts.main.enums.RelationShipTypes.RELATION_SHIPS;
+
 public class WorkBookPartCreator extends PartsCreator<WorkBookConfig> {
 
     private final ConfigCollection<ContentTypeConfig> contentTypeConfigs;
@@ -32,17 +36,17 @@ public class WorkBookPartCreator extends PartsCreator<WorkBookConfig> {
 
         //register part in ContentType
         contentTypeConfigs.addConfig(new ContentTypeConfig("Override", "/xl/workbook.xml",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"));
+                WORKBOOK.getPart()));
 
         zos.putArchiveEntry(new ZipArchiveEntry(name));
 
         xsw.writeStartDocument();
         xsw.writeStartElement("workbook");
-        xsw.writeNamespace("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main");
-        xsw.writeNamespace("r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships");
-        xsw.writeNamespace("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
+        xsw.writeNamespace("xmlns", SPREAD_SHEET.getSchema());
+        xsw.writeNamespace("r", RELATION_SHIPS.getType());
+        xsw.writeNamespace("mc", MARKUP_COMPATIBILITY.getSchema());
         xsw.writeAttribute("mc:Ignorable", "x15");
-        xsw.writeNamespace("x15", "http://schemas.microsoft.com/office/spreadsheetml/2010/11/main");
+        xsw.writeNamespace("x15", MS_WORKBOOK.getSchema());
         xsw.writeStartElement("sheets");
 
         List<WorkBookConfig> configs = configCollection.getConfigs();

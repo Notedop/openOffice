@@ -1,7 +1,8 @@
 package com.rvh.openoffice.parts.main;
 
 import com.rvh.openoffice.parts.main.config.*;
-import com.rvh.openoffice.parts.main.enums.RelationTypes;
+import com.rvh.openoffice.parts.main.enums.ContentTypes;
+import com.rvh.openoffice.parts.main.enums.RelationShipTypes;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
@@ -9,6 +10,8 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+
+import static com.rvh.openoffice.parts.main.enums.NameSpaces.*;
 
 public class CorePartCreator extends PartsCreator<CoreConfig>{
 
@@ -36,40 +39,39 @@ public class CorePartCreator extends PartsCreator<CoreConfig>{
 
         //register part in ContentType
         contentTypeConfigs.addConfig(new ContentTypeConfig("Override", "/docProps/core.xml",
-                "application/vnd.openxmlformats-package.core-properties+xml"));
+                ContentTypes.CORE_PROPERTIES.getPart()));
 
         //create relation in RelationPart
         String relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
-        relConfigs.addConfig(new RelConfig(".rels", relId, RelationTypes.CORE,"docProps/core.xml", "_rels/" ));
+        relConfigs.addConfig(new RelConfig(".rels", relId, RelationShipTypes.CORE,"docProps/core.xml", "_rels/" ));
 
         zos.putArchiveEntry(new ZipArchiveEntry(name));
         xsw.writeStartDocument();
 
         writeNameSpace();
 
-        writeBasicElement("http://schemas.openxmlformats.org/package/2006/metadata/core-properties","category", coreConfig.getCategory());
-        writeBasicElement("http://schemas.openxmlformats.org/package/2006/metadata/core-properties","contentStatus", coreConfig.getContentStatus());
+        writeBasicElement(CORE_PROPERTIES.getSchema(),"category", coreConfig.getCategory());
+        writeBasicElement(CORE_PROPERTIES.getSchema(),"contentStatus", coreConfig.getContentStatus());
         writeCreatedDate();
-        writeBasicElement("http://purl.org/dc/elements/1.1/", "creator", coreConfig.getCreator());
-        writeBasicElement("http://purl.org/dc/elements/1.1/","description", coreConfig.getDescription());
-        writeBasicElement("http://schemas.openxmlformats.org/package/2006/metadata/core-properties", "lastModifiedBy",
-                coreConfig.getLastModifiedBy());
-        writeBasicElement("http://purl.org/dc/elements/1.1/","language", coreConfig.getLanguage());
+        writeBasicElement(DUBLIN_CORE_ELEMENTS.getSchema(), "creator", coreConfig.getCreator());
+        writeBasicElement(DUBLIN_CORE_ELEMENTS.getSchema(),"description", coreConfig.getDescription());
+        writeBasicElement(CORE_PROPERTIES.getSchema(), "lastModifiedBy", coreConfig.getLastModifiedBy());
+        writeBasicElement(DUBLIN_CORE_ELEMENTS.getSchema(),"language", coreConfig.getLanguage());
         writeModifiedDate();
-        writeBasicElement("http://purl.org/dc/elements/1.1/","title", coreConfig.getTitle());
-        writeBasicElement("http://purl.org/dc/elements/1.1/","subject", coreConfig.getSubject());
-        writeBasicElement("http://schemas.openxmlformats.org/package/2006/metadata/core-properties","version", coreConfig.getVersion());
+        writeBasicElement(DUBLIN_CORE_ELEMENTS.getSchema(),"title", coreConfig.getTitle());
+        writeBasicElement(DUBLIN_CORE_ELEMENTS.getSchema(),"subject", coreConfig.getSubject());
+        writeBasicElement(CORE_PROPERTIES.getSchema(),"version", coreConfig.getVersion());
 
     }
 
 
     private void writeNameSpace() throws XMLStreamException {
         xsw.writeStartElement( "cp:coreProperties" );
-        xsw.writeNamespace("cp", "http://schemas.openxmlformats.org/package/2006/metadata/core-properties");
-        xsw.writeNamespace("dc", "http://purl.org/dc/elements/1.1/");
-        xsw.writeNamespace("dcterms", "http://purl.org/dc/terms/");
-        xsw.writeNamespace("dcmitype", "http://purl.org/dc/dcmitype/");
-        xsw.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        xsw.writeNamespace("cp", CORE_PROPERTIES.getSchema());
+        xsw.writeNamespace("dc", DUBLIN_CORE_ELEMENTS.getSchema());
+        xsw.writeNamespace("dcterms", DUBLIN_CORE_TERMS.getSchema());
+        xsw.writeNamespace("dcmitype", DUBLIC_CORE_DCMITYPE.getSchema());
+        xsw.writeNamespace("xsi", XSI.getSchema());
     }
 
     private void writeCreatedDate() throws XMLStreamException {
@@ -89,8 +91,8 @@ public class CorePartCreator extends PartsCreator<CoreConfig>{
                 .withZone(ZoneId.of("UTC"))
                 .format(coreConfig.getModified());
 
-        xsw.writeStartElement("http://purl.org/dc/terms/", "modified");
-        xsw.writeAttribute("http://www.w3.org/2001/XMLSchema-instance", "type", "dcterms:W3CDTF");
+        xsw.writeStartElement(DUBLIN_CORE_TERMS.getSchema(), "modified");
+        xsw.writeAttribute(XSI.getSchema(), "type", "dcterms:W3CDTF");
         xsw.writeCharacters(modifiedDateValue);
         xsw.writeEndElement();
     }
