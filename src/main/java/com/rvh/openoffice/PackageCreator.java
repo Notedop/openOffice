@@ -46,7 +46,7 @@ public class PackageCreator {
             relId = "rId" + (relConfigs.countConfigByName(RELS) + 1);
             relConfigs.addConfig(new RelConfig(RELS, relId, RelationShipTypes.OFFICE_DOC, "xl/workbook.xml", "_rels/"));
 
-            AppPartCreator appPartCreator = new AppPartCreator(zos, null);
+            AppPartCreator appPartCreator = new AppPartCreator(zos, null, contentTypeConfigs);
             appPartCreator.createPart();
 
             CorePartCreator corePartCreator = new CorePartCreator(zos, coreConfig, relConfigs, contentTypeConfigs);

@@ -31,14 +31,7 @@ public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
             xsw.writeAttribute("PartName", config.getPartName());
             xsw.writeAttribute(CONTENT_TYPE_ATTR
                     , config.getContentType());
-
         }
-
-        //TODO: move to AppPartCreator once implemented
-        xsw.writeEmptyElement("Override");
-        xsw.writeAttribute("PartName", "/docProps/app.xml");
-        xsw.writeAttribute(CONTENT_TYPE_ATTR
-                , EXTENDED_PROPERTIES.getPart());
 
         createFooter();
 

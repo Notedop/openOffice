@@ -2,6 +2,8 @@ package com.rvh.openoffice.parts.main;
 
 import com.rvh.openoffice.parts.main.config.AppConfig;
 import com.rvh.openoffice.parts.main.config.ConfigCollection;
+import com.rvh.openoffice.parts.main.config.ContentTypeConfig;
+import com.rvh.openoffice.parts.main.enums.ContentTypes;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
@@ -12,8 +14,12 @@ import static com.rvh.openoffice.parts.main.enums.NameSpaces.EXTENDED_PROPERTIES
 
 public class AppPartCreator extends PartsCreator<AppConfig> {
 
-    public AppPartCreator(ZipArchiveOutputStream zos, ConfigCollection<AppConfig> configCollection) {
+    private final ConfigCollection<ContentTypeConfig> contentTypeConfigs;
+
+    public AppPartCreator(ZipArchiveOutputStream zos, ConfigCollection<AppConfig> configCollection,
+                          ConfigCollection<ContentTypeConfig> contentTypeConfigs) {
         super(zos, configCollection);
+        this.contentTypeConfigs = contentTypeConfigs;
     }
 
     @Override
@@ -26,6 +32,10 @@ public class AppPartCreator extends PartsCreator<AppConfig> {
 
     @Override
     public void createHeader(String name) throws XMLStreamException, IOException {
+
+        //register part in ContentType
+        contentTypeConfigs.addConfig(new ContentTypeConfig("Override", "/docProps/app.xml",
+                ContentTypes.EXTENDED_PROPERTIES.getPart()));
 
         zos.putArchiveEntry(new ZipArchiveEntry(name));
         xsw.writeStartDocument("UTF-8", "1.0");
