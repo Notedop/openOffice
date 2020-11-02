@@ -46,36 +46,57 @@ public class WorkSheetRowHandler {
     }
 
     private void processSingleRow(ResultSet rs) throws SQLException {
-        ResultSetMetaData metaData = rs.getMetaData();
-        int columnCount = metaData.getColumnCount();
         //TODO: Check columncount against any possible configuration that has been passed
         log.debug("writing row");
         try {
             //TODO: Read row formatting from configuration and apply here
-            xmlStreamWriter.writeStartElement("row");
-            xmlStreamWriter.writeAttribute("r", String.valueOf(processedRows + 1));
-            for (int i = 1; i <= columnCount; i++) {
-                log.debug("writng cell");
-                //TODO: Read cell formatting from configuration and apply here
-                //TODO: use columntype to set appropiate cell type
-                xmlStreamWriter.writeStartElement("c");
-                xmlStreamWriter.writeAttribute("r", getColumnName(i) );
-                xmlStreamWriter.writeAttribute("t", "inlineStr");
-                xmlStreamWriter.writeStartElement("is");
-                xmlStreamWriter.writeStartElement("t");
-                xmlStreamWriter.writeCharacters(rs.getString(i));
-                xmlStreamWriter.writeEndElement();//text
-                xmlStreamWriter.writeEndElement();//string inline
-                xmlStreamWriter.writeEndElement();//column
-                //TODO: Throw CellCreatedEvent
+            //write headers
+            switch (processedRows) {
+                case 0:
+                    writeRow(rs, true);
+                    break;
             }
-            xmlStreamWriter.writeEndElement();
-            //TODO: Throw RowCreatedEvent
-            xmlStreamWriter.flush();
-            processedRows++;
+
+            writeRow(rs, false);
+
         } catch (XMLStreamException e) {
             e.printStackTrace();
         }
+    }
+
+    private void writeRow(ResultSet rs, boolean isHeaderRow) throws XMLStreamException, SQLException {
+
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
+
+        xmlStreamWriter.writeStartElement("row");
+        xmlStreamWriter.writeAttribute("r", String.valueOf(processedRows + 1));
+        for (int i = 1; i <= columnCount; i++) {
+            if (isHeaderRow) {
+                writeCell(metaData.getColumnName(i), getColumnPosition(i));
+            } else {
+                writeCell(rs.getString(i), getColumnPosition(i));
+            }
+        }
+
+        xmlStreamWriter.writeEndElement();
+        xmlStreamWriter.flush();
+        processedRows++;
+    }
+
+    private void writeCell(String cellValue, String cellPosition) throws XMLStreamException {
+        log.debug("writing cell");
+        //TODO: Read cell formatting from configuration and apply here
+        //TODO: use columntype to set appropiate cell type
+        xmlStreamWriter.writeStartElement("c");
+        xmlStreamWriter.writeAttribute("r", cellPosition );
+        xmlStreamWriter.writeAttribute("t", "inlineStr");
+        xmlStreamWriter.writeStartElement("is");
+        xmlStreamWriter.writeStartElement("t");
+        xmlStreamWriter.writeCharacters(cellValue);
+        xmlStreamWriter.writeEndElement();//text
+        xmlStreamWriter.writeEndElement();//string inline
+        xmlStreamWriter.writeEndElement();//column
     }
 
     public int getProcessedRows() {
@@ -86,7 +107,7 @@ public class WorkSheetRowHandler {
         return processedSheets;
     }
 
-    public String getColumnName(int columnCount) {
+    public String getColumnPosition(int columnCount) {
 
         String columnName = "";
         int aToZ = 26;
