@@ -5,6 +5,8 @@ import org.h2.tools.RunScript;
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -13,8 +15,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -25,7 +26,7 @@ public class h2DatabaseTests {
     private static Server server = null;
     private static Server webServer = null;
 
-    private static final Logger log = Logger.getLogger("h2DatabaseTests");
+    private static final Logger log = LoggerFactory.getLogger(h2DatabaseTests.class);
 
     @BeforeAll
     static void initializeDatabase() throws Exception {
@@ -37,7 +38,7 @@ public class h2DatabaseTests {
             dbProperties.load(inputStream);
             checkProperties(dbProperties);
         } catch (IOException | NullPointerException ex) {
-            log.severe("Unable to load database.properties!");
+            log.error("Unable to load database.properties!");
             throw new Exception(ex);
         }
 
@@ -46,9 +47,9 @@ public class h2DatabaseTests {
             if (startUpScript != null && !startUpScript.equals(""))
                 scriptLoc = h2DatabaseTests.class.getResource(startUpScript).getFile();
             else
-                log.warning("No startup script defined");
+                log.info("No startup script defined");
         } catch (NullPointerException ex) {
-            log.warning("Unable to load specified startup script:" + startUpScript);
+            log.error("Unable to load specified startup script: {}", startUpScript);
         }
 
         try {
@@ -86,7 +87,7 @@ public class h2DatabaseTests {
 
 
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Error occured", e.getCause());
+            log.error("Error occurred: ", e.getCause());
         }
 
     }
@@ -101,7 +102,7 @@ public class h2DatabaseTests {
         try {
             conn.close();
         } catch (SQLException ex) {
-            log.warning(ex.getMessage());
+            log.error(ex.getMessage());
         }
         server.shutdown();
         if (webServer != null)
