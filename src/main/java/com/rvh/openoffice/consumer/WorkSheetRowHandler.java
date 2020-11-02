@@ -104,7 +104,7 @@ public class WorkSheetRowHandler {
         }
 
         //column cell name exists out of column name + rownumber. For example A1 or AB3
-        columnName =  columnName + String.valueOf(processedRows+1);
+        columnName =  columnName + (processedRows + 1);
         return columnName;
     }
 }

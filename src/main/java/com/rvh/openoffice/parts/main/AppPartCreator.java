@@ -2,7 +2,6 @@ package com.rvh.openoffice.parts.main;
 
 import com.rvh.openoffice.parts.main.config.AppConfig;
 import com.rvh.openoffice.parts.main.config.ConfigCollection;
-import com.rvh.openoffice.parts.main.config.CoreConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
@@ -11,7 +10,7 @@ import java.io.IOException;
 
 import static com.rvh.openoffice.parts.main.enums.NameSpaces.EXTENDED_PROPERTIES;
 
-public class AppPartCreator extends PartsCreator<AppConfig>{
+public class AppPartCreator extends PartsCreator<AppConfig> {
 
     public AppPartCreator(ZipArchiveOutputStream zos, ConfigCollection<AppConfig> configCollection) {
         super(zos, configCollection);
@@ -31,7 +30,7 @@ public class AppPartCreator extends PartsCreator<AppConfig>{
         zos.putArchiveEntry(new ZipArchiveEntry(name));
         xsw.writeStartDocument("UTF-8", "1.0");
 
-        xsw.writeStartElement( "Properties");
+        xsw.writeStartElement("Properties");
         xsw.writeNamespace("xmlns", EXTENDED_PROPERTIES.getSchema());
 
         writeBasicElement("Application", "Microsoft Excel");

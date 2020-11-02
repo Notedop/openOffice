@@ -5,10 +5,10 @@ public class ContentTypeConfig extends Config {
     private final String partName;
     private final String contentType;
 
-    public ContentTypeConfig(String name, String partName, String ContentType) {
+    public ContentTypeConfig(String name, String partName, String contentType) {
         super(name, null, null);
         this.partName = partName;
-        contentType = ContentType;
+        this.contentType = contentType;
     }
 
     public String getPartName() {

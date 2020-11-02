@@ -14,6 +14,8 @@ import static com.rvh.openoffice.parts.main.enums.NameSpaces.CONTENT_TYPES;
 public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
 
     private static final String CONTENT_TYPE = "[Content_Types].xml";
+    public static final String CONTENT_TYPE_ATTR
+            = "ContentType";
 
     public ContentTypePartCreator(ZipArchiveOutputStream zos, ConfigCollection<ContentTypeConfig> configCollection) {
         super(zos, configCollection);
@@ -27,14 +29,16 @@ public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
         for (ContentTypeConfig config : configCollection.getConfigs()) {
             xsw.writeEmptyElement(config.getName());
             xsw.writeAttribute("PartName", config.getPartName());
-            xsw.writeAttribute("ContentType", config.getContentType());
+            xsw.writeAttribute(CONTENT_TYPE_ATTR
+                    , config.getContentType());
 
         }
 
         //TODO: move to AppPartCreator once implemented
         xsw.writeEmptyElement("Override");
         xsw.writeAttribute("PartName", "/docProps/app.xml");
-        xsw.writeAttribute("ContentType", EXTENDED_PROPERTIES.getPart());
+        xsw.writeAttribute(CONTENT_TYPE_ATTR
+                , EXTENDED_PROPERTIES.getPart());
 
         createFooter();
 
@@ -54,7 +58,8 @@ public class ContentTypePartCreator extends PartsCreator<ContentTypeConfig> {
     private void writeDefaultElement(String extension, String contentType) throws XMLStreamException {
         xsw.writeEmptyElement("Default");
         xsw.writeAttribute("Extension", extension);
-        xsw.writeAttribute("ContentType", contentType);
+        xsw.writeAttribute(CONTENT_TYPE_ATTR
+                , contentType);
     }
 
     @Override

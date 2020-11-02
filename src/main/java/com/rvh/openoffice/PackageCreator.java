@@ -16,12 +16,12 @@ import com.rvh.openoffice.parts.spreadsheet.config.WorkBookConfig;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class PackageCreator {
 
+    public static final String RELS = ".rels";
     private final CoreConfig coreConfig;
     //will be populated during processing
     private final ConfigCollection<RelConfig> relConfigs = new ConfigCollection<>();
@@ -35,16 +35,16 @@ public class PackageCreator {
         this.sheetConfigs = sheetConfigs;
     }
 
-    public void generate(File template, String entry, OutputStream out) throws IOException, XMLStreamException {
+    public void generate(OutputStream out) throws IOException, XMLStreamException {
 
         try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out)) {
 
             //create main relation configurations
-            String relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
-            relConfigs.addConfig(new RelConfig(".rels", relId, RelationShipTypes.EXTENDED, "docProps/app.xml", "_rels/"));
+            String relId = "rId" + (relConfigs.countConfigByName(RELS) + 1);
+            relConfigs.addConfig(new RelConfig(RELS, relId, RelationShipTypes.EXTENDED, "docProps/app.xml", "_rels/"));
 
-            relId = "rId" + (relConfigs.countConfigByName(".rels") + 1);
-            relConfigs.addConfig(new RelConfig(".rels", relId, RelationShipTypes.OFFICE_DOC, "xl/workbook.xml", "_rels/"));
+            relId = "rId" + (relConfigs.countConfigByName(RELS) + 1);
+            relConfigs.addConfig(new RelConfig(RELS, relId, RelationShipTypes.OFFICE_DOC, "xl/workbook.xml", "_rels/"));
 
             AppPartCreator appPartCreator = new AppPartCreator(zos, null);
             appPartCreator.createPart();
@@ -58,7 +58,7 @@ public class PackageCreator {
             WorkBookPartCreator wbCreator = new WorkBookPartCreator(zos, workBookConfigs, contentTypeConfigs);
             wbCreator.createPart();
 
-            RelPartCreator relPartCreator = new RelPartCreator(zos, relConfigs, contentTypeConfigs);
+            RelPartCreator relPartCreator = new RelPartCreator(zos, relConfigs);
             relPartCreator.createPart();
 
             ContentTypePartCreator contentTypePartCreator = new ContentTypePartCreator(zos, contentTypeConfigs);

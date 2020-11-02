@@ -39,12 +39,10 @@ class testXml extends h2DatabaseTests {
 
         for (int i = 1; i <= columns; i++) {
             sb.append("ID_");
-            sb.append(String.valueOf(i));
+            sb.append(i);
             sb.append(" VARCHAR(10) NOT NULL");
             if (i != columns) {
                 sb.append(",");
-            } else {
-                sb.append("");
             }
         }
         sb.append(");");
@@ -58,14 +56,14 @@ class testXml extends h2DatabaseTests {
         for (int j = 1; j <= numberOfRows; j++) {
             sb.append("(");
             for (int i = 1; i <= columns; i++) {
-                sb.append("\'");
-                sb.append(String.valueOf(j));
-                sb.append(String.valueOf('-'));
-                sb.append(String.valueOf(i));
+                sb.append("'");
+                sb.append(j);
+                sb.append('-');
+                sb.append(i);
                 if (i!=columns) {
-                    sb.append("\',");
+                    sb.append("',");
                 } else {
-                    sb.append("\'");
+                    sb.append("'");
                 }
 
 
@@ -87,7 +85,6 @@ class testXml extends h2DatabaseTests {
 
         File outputFile = new File("test.xlsx");
         OutputStream fos = new FileOutputStream(outputFile);
-        File template = new File(this.getClass().getClassLoader().getResource("template.xlsx").getFile());
 
         ConfigCollection<SheetConfig> sheetConfigs = new ConfigCollection<>();
 
@@ -100,7 +97,7 @@ class testXml extends h2DatabaseTests {
         sheetConfigs.addConfig(new SheetConfig("sheet2", getDataSource(),"select * from excel_test_data", 50, tableConfig, "1"));
         PackageCreator creator = new PackageCreator(coreConfig, sheetConfigs);
 
-        creator.generate(template, "sheet1", fos);
+        creator.generate(fos);
         fos.close();
     }
 }
