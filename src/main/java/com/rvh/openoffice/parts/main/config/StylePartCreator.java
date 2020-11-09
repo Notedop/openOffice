@@ -153,7 +153,7 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
     }
 
     /**
-     * writes all borders of a single cell configuration
+     * writes all borders of a single cell configuration according to defined sequence
      *
      * @param cellBorder
      * @throws XMLStreamException
@@ -162,11 +162,12 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
 
         xsw.writeStartElement("border");
 
-        writeSingleCellBorder("bottom", cellBorder.getBottom());
-        writeSingleCellBorder("top", cellBorder.getTop());
         writeSingleCellBorder("left", cellBorder.getLeft());
         writeSingleCellBorder("right", cellBorder.getRight());
+        writeSingleCellBorder("top", cellBorder.getTop());
+        writeSingleCellBorder("bottom", cellBorder.getBottom());
         writeSingleCellBorder("diagonal", cellBorder.getDiagonal());
+        writeSingleCellBorder("vertical", cellBorder.getVertical());
         writeSingleCellBorder("horizontal", cellBorder.getHorizontal());
 
         xsw.writeEndElement();//border
@@ -230,7 +231,7 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
         List<Font> fonts = fontConfigCollection.getConfigs();
 
         if (fonts != null && !fonts.isEmpty()) {
-            xsw.writeStartElement("Fonts");
+            xsw.writeStartElement("fonts");
             xsw.writeAttribute("count", String.valueOf(fonts.size()));
             for (Font font : fonts) {
                 writeSingleFont(font);
@@ -248,7 +249,7 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
      */
     private void writeSingleFont(Font font) throws XMLStreamException {
 
-        xsw.writeStartElement("Font");
+        xsw.writeStartElement("font");
 
         if (font.getName() != null && !font.getName().isEmpty())
             writeEmptyElementWithAttribute("name", font.getName());
