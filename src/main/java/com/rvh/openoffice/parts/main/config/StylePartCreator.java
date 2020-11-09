@@ -2,7 +2,6 @@ package com.rvh.openoffice.parts.main.config;
 
 import com.rvh.openoffice.parts.main.PartsCreator;
 import com.rvh.openoffice.parts.main.config.styles.*;
-import com.rvh.openoffice.parts.main.enums.styles.FontScheme;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
@@ -35,6 +34,7 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
      * The styleconfig ID will be referenced in a cell to apply the format via the xfId of the cellconfig.
      * The result is that there may be multiple different Cellconfiguration but they reference the same
      * Styleconfig
+     *
      * @throws XMLStreamException
      * @throws IOException
      */
@@ -57,20 +57,175 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
 
 
         //write collections
-        writeFonts(fontConfigCollection);
-
+        writeFonts();
+        writeNumberFormat();
+        writeAllCellBorders();
+        writeFills();
 
         createFooter();
+
+    }
+
+    private void writeFills() throws XMLStreamException {
+
+        List<Fill> fills = fillConfigCollection.getConfigs();
+
+        if (fills != null && !fills.isEmpty()) {
+            xsw.writeStartElement("fills");
+            xsw.writeAttribute("count", String.valueOf(fills.size()));
+            for (Fill fill : fills) {
+                writeSingleFill(fill);
+            }
+            xsw.writeEndElement();//fills
+        }
+
+    }
+
+    /**
+     * Writes the fill configuration. Only one fill can be configured.
+     * If both fills are configured then Gradient fill takes precedence
+     * @param fill
+     * @throws XMLStreamException
+     */
+    private void writeSingleFill(Fill fill) throws XMLStreamException {
+
+        xsw.writeStartElement("fill");
+
+        if (fill.getGradientFill() != null) {
+             writeGradientFill(fill.getGradientFill());
+        } else {
+            writePatternFill(fill.getPatternFill());
+        }
+
+        xsw.writeEndElement();//fill
+
+
+    }
+
+    private void writePatternFill(PatternFill patternFill) throws XMLStreamException {
+
+        xsw.writeStartElement("patternFill");
+        if (patternFill.getPatternType()!=null)
+            xsw.writeAttribute("patternType", patternFill.getPatternType().getValue());
+        if(patternFill.getBackGroundColor()!=null)
+            writeColor(patternFill.getBackGroundColor());
+        if(patternFill.getForeGroundColor()!=null)
+            writeColor(patternFill.getForeGroundColor());
+        xsw.writeEndElement();//patternFill
+
+    }
+
+    private void writeGradientFill(GradientFill gradientFill) throws XMLStreamException {
+
+        xsw.writeStartElement("gradientFill");
+        if (gradientFill.getGradientType()!=null)
+            xsw.writeAttribute("type", gradientFill.getGradientType().getValue());
+        if (gradientFill.getDegree() !=0)
+            xsw.writeAttribute("degree", String.valueOf(gradientFill.getDegree()));
+        if (gradientFill.getLeft()!= 0)
+            xsw.writeAttribute("left", String.valueOf(gradientFill.getLeft()));
+        if (gradientFill.getRight()!=0)
+            xsw.writeAttribute("right", String.valueOf(gradientFill.getRight()));
+        if (gradientFill.getBottom()!= 0)
+            xsw.writeAttribute("bottom", String.valueOf(gradientFill.getBottom()));
+        if (gradientFill.getTop()!=0)
+            xsw.writeAttribute("top", String.valueOf(gradientFill.getTop()));
+
+        //TODO: write GradientStop element (not in model yet.
+
+        xsw.writeEndElement(); // gradientFill
+
+    }
+
+    private void writeAllCellBorders() throws XMLStreamException {
+
+        List<CellBorders> cellBorders = cellBordersConfigCollection.getConfigs();
+
+        if (cellBorders != null && !cellBorders.isEmpty()) {
+            xsw.writeStartElement("borders");
+            for (CellBorders cellBorder : cellBorders) {
+                writeCellBorders(cellBorder);
+            }
+            xsw.writeEndElement();
+        }
+
+
+    }
+
+    /**
+     * writes all borders of a single cell configuration
+     *
+     * @param cellBorder
+     * @throws XMLStreamException
+     */
+    private void writeCellBorders(CellBorders cellBorder) throws XMLStreamException {
+
+        xsw.writeStartElement("border");
+
+        writeSingleCellBorder("bottom", cellBorder.getBottom());
+        writeSingleCellBorder("top", cellBorder.getTop());
+        writeSingleCellBorder("left", cellBorder.getLeft());
+        writeSingleCellBorder("right", cellBorder.getRight());
+        writeSingleCellBorder("diagonal", cellBorder.getDiagonal());
+        writeSingleCellBorder("horizontal", cellBorder.getHorizontal());
+
+        xsw.writeEndElement();//border
+
+    }
+
+    /**
+     * writes a single border of a single cell configuration
+     *
+     * @param borderElementName
+     * @param border
+     * @throws XMLStreamException
+     */
+    private void writeSingleCellBorder(String borderElementName, Border border) throws XMLStreamException {
+
+        if (border != null && borderElementName != null && !borderElementName.isEmpty()) {
+            xsw.writeStartElement(borderElementName);
+            if (border.getStyle()!=null)
+                xsw.writeAttribute("style", border.getStyle().getValue());
+            if (border.getColor()!=null)
+                writeColor(border.getColor());
+            xsw.writeEndElement();
+        }
+
+    }
+
+    private void writeNumberFormat() throws XMLStreamException {
+
+        List<NumberFormat> numberFormats = numberFormatConfigCollection.getConfigs();
+
+        if (numberFormats != null && !numberFormats.isEmpty()) {
+            xsw.writeStartElement("numFmts");
+            xsw.writeAttribute("count", String.valueOf(numberFormats.size()));
+            for (NumberFormat format : numberFormats) {
+                writeSingleNumberFormat(format);
+            }
+            xsw.writeEndElement();
+        }
+
+    }
+
+    private void writeSingleNumberFormat(NumberFormat format) throws XMLStreamException {
+
+        xsw.writeStartElement("numFmt");
+
+        xsw.writeAttribute("numFmtId", format.getId());
+        xsw.writeAttribute("formatCode", format.getFormatCode());
+
+        xsw.writeEndElement();
 
     }
 
     /**
      * writes the <Fonts></Fonts> collection to the styles.xml
      * Each record in the collection results in a <Font></Font>
-     * @param fontConfigCollection
+     *
      * @throws XMLStreamException
      */
-    private void writeFonts(ConfigCollection<Font> fontConfigCollection) throws XMLStreamException {
+    private void writeFonts() throws XMLStreamException {
 
         List<Font> fonts = fontConfigCollection.getConfigs();
 
@@ -87,6 +242,7 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
 
     /**
      * Writes the <Font></Font> element with all it's children
+     *
      * @param font
      * @throws XMLStreamException
      */
@@ -100,28 +256,22 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
             writeEmptyElementWithAttribute("charset", String.valueOf(font.getCharSet()));
         if (font.getFamily() > 0)
             writeEmptyElementWithAttribute("family", String.valueOf(font.getFamily()));
-        if (!font.isBold())
-            writeEmptyElementWithAttribute("b", String.valueOf(font.isBold()));
-        if (!font.isItalic())
-            writeEmptyElementWithAttribute("i", String.valueOf(font.isItalic()));
-        if (!font.isStrikeThrough())
-            writeEmptyElementWithAttribute("strike", String.valueOf(font.isStrikeThrough()));
-        if (!font.isOutLine())
-            writeEmptyElementWithAttribute("outline", String.valueOf(font.isOutLine()));
-        if (!font.isShadow())
-            writeEmptyElementWithAttribute("shadow", String.valueOf(font.isShadow()));
-        if (!font.isCondense())
-            writeEmptyElementWithAttribute("condense", String.valueOf(font.isCondense()));
-        if (!font.isExtend())
-            writeEmptyElementWithAttribute("extend", String.valueOf(font.isExtend()));
-        if (font.getColor() !=null)
+        if (font.getColor() != null)
             writeColor(font.getColor());
-        if (font.getFontSize()>0)
+        if (font.getFontSize() > 0)
             writeEmptyElementWithAttribute("sz", String.valueOf(font.getFontSize()));
         if (font.getUnderLine() != null)
             writeEmptyElementWithAttribute("u", font.getUnderLine().getValue());
-        if (font.getFontScheme()!=null)
+        if (font.getFontScheme() != null)
             writeEmptyElementWithAttribute("scheme", font.getFontScheme().getValue());
+
+        writeEmptyElementWithAttribute("b", String.valueOf(font.isBold()));
+        writeEmptyElementWithAttribute("i", String.valueOf(font.isItalic()));
+        writeEmptyElementWithAttribute("strike", String.valueOf(font.isStrikeThrough()));
+        writeEmptyElementWithAttribute("outline", String.valueOf(font.isOutLine()));
+        writeEmptyElementWithAttribute("shadow", String.valueOf(font.isShadow()));
+        writeEmptyElementWithAttribute("condense", String.valueOf(font.isCondense()));
+        writeEmptyElementWithAttribute("extend", String.valueOf(font.isExtend()));
 
         xsw.writeEndElement();//Font
 
@@ -129,6 +279,7 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
 
     /**
      * writes the <Color attr.. attr.. /> element with all its attributes
+     *
      * @param color
      * @throws XMLStreamException
      */
@@ -137,13 +288,13 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
         xsw.writeEmptyElement("color");
         if (!color.isAuto())
             xsw.writeAttribute("auto", String.valueOf(color.isAuto()));
-        if(color.getIndexed()>0)
+        if (color.getIndexed() > 0)
             xsw.writeAttribute("indexed", String.valueOf(color.getIndexed()));
-        if(color.getRgb()!=null && !color.getRgb().isEmpty())
+        if (color.getRgb() != null && !color.getRgb().isEmpty())
             xsw.writeAttribute("rgb", String.valueOf(color.getRgb()));
-        if (color.getTheme()>0)
+        if (color.getTheme() > 0)
             xsw.writeAttribute("theme", String.valueOf(color.getTheme()));
-        if(color.getTint() > 0)
+        if (color.getTint() > 0)
             xsw.writeAttribute("tint", String.valueOf(color.getTint()));
 
     }
@@ -166,6 +317,7 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
     /**
      * Creates a style based on the font, numberformat, border and fill configuration defined
      * in the cellConfig. Style is added to the collection if non-existing.
+     *
      * @param cellConfig cell configuration which required to be verified
      * @return Style that is either created or already existed
      */
@@ -199,15 +351,16 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
      * Verifies if the font defined in the cell configuration already exist in the
      * font collection. If not, then add the font
      * The index of the font in the font collection is set to the Style object
+     *
      * @param cellConfig containing font configuration
-     * @param style enhanced with fontId
+     * @param style      enhanced with fontId
      */
     private void setFontId(CellConfig cellConfig, Style style) {
         String fontConfigId;
         List<Font> fonts = fontConfigCollection.getConfigs();
         Font cellFont = cellConfig.getFont();
 
-        if (cellFont!= null) {
+        if (cellFont != null) {
             if (!fonts.contains(cellFont)) {
                 fonts.add(cellFont);
             }
@@ -222,15 +375,16 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
      * Verifies if the NumberFormat defined in the cell configuration already exist in the
      * NumberFormat collection. If not, then add the NumberFormat
      * The index of the NumberFormat in the NumberFormat collection is set to the Style object
+     *
      * @param cellConfig containing NumberFormat configuration
-     * @param style enhanced with NumberFormatId
+     * @param style      enhanced with NumberFormatId
      */
     private void setNumberFormatId(CellConfig cellConfig, Style style) {
         String numberFormatId;
         List<NumberFormat> numberFormats = numberFormatConfigCollection.getConfigs();
         NumberFormat numberFormat = cellConfig.getNumberFormat();
 
-        if (numberFormat!=null) {
+        if (numberFormat != null) {
             if (!numberFormats.contains(numberFormat)) {
                 numberFormats.add(numberFormat);
             }
@@ -245,15 +399,16 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
      * Verifies if the Border defined in the cell configuration already exist in the
      * Border collection. If not, then add the Border
      * The index of the Border in the Border collection is set to the Style object
+     *
      * @param cellConfig containing Border configuration
-     * @param style enhanced with BorderId
+     * @param style      enhanced with BorderId
      */
     private void setBorderId(CellConfig cellConfig, Style style) {
         String cellBordersId;
         List<CellBorders> cellBorders = cellBordersConfigCollection.getConfigs();
         CellBorders cellBorder = cellConfig.getCellBorders();
 
-        if (cellBorder!=null) {
+        if (cellBorder != null) {
             if (!cellBorders.contains(cellBorder)) {
                 cellBorders.add(cellBorder);
             }
@@ -267,15 +422,16 @@ public class StylePartCreator extends PartsCreator<CellConfig> {
      * Verifies if the Fill defined in the cell configuration already exist in the
      * Fill collection. If not, then add the Fill
      * The index of the Fill in the Fill collection is set to the Style object
+     *
      * @param cellConfig containing Fill configuration
-     * @param style enhanced with FillId
+     * @param style      enhanced with FillId
      */
     private void setFillId(CellConfig cellConfig, Style style) {
         String fillId;
         List<Fill> fills = fillConfigCollection.getConfigs();
         Fill fill = cellConfig.getFill();
 
-        if (fill!=null) {
+        if (fill != null) {
             if (!fills.contains(fill)) {
                 fills.add(fill);
             }
